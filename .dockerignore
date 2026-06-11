@@ -1,0 +1,9 @@
+.git
+.gemini
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.dbf
+.DS_Store
+*.log

@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lịch Sử Chia Sẻ Báo Giá - EVG</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand: #d89b00;
+      --brand-dark: #8f6500;
+      --ui-bg: #090d16;
+      --ui-card: #1e293b;
+      --ui-border: #334155;
+      --ui-text: #f8fafc;
+      --ui-text-muted: #94a3b8;
+      --ui-accent: #f59e0b;
+      --ui-accent-hover: #d97706;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--ui-bg);
+      color: var(--ui-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    /* Header section */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--ui-border);
+      padding-bottom: 20px;
+    }
+
+    .header-title-box {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-logo {
+      height: 45px;
+      object-fit: contain;
+    }
+
+    .header-title h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ui-accent);
+      letter-spacing: 0.5px;
+    }
+
+    .header-title p {
+      margin: 5px 0 0;
+      font-size: 13px;
+      color: var(--ui-text-muted);
+    }
+
+    .btn-back {
+      background: #4f46e5;
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    }
+
+    .btn-back:hover {
+      background: #4338ca;
+      transform: translateX(-3px);
+    }
+
+    /* Stats Section */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .stat-card {
+      background: rgba(30, 41, 59, 0.45);
+      border: 1px solid var(--ui-border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--ui-accent);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stat-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--ui-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ui-text);
+    }
+
+    /* Control Panel (Search) */
+    .control-panel {
+      background: var(--ui-card);
+      border: 1px solid var(--ui-border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+
+    .search-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--ui-bg);
+      border: 1px solid var(--ui-border);
+      padding: 4px 14px;
+      border-radius: 8px;
+      transition: border-color 0.2s;
+    }
+
+    .search-wrapper:focus-within {
+      border-color: var(--ui-accent);
+    }
+
+    .search-wrapper svg {
+      color: var(--ui-text-muted);
+      flex-shrink: 0;
+    }
+
+    .search-input {
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 10px 0;
+      color: var(--ui-text);
+      font-size: 14px;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    /* Table Container */
+    .table-container {
+      background: var(--ui-card);
+      border: 1px solid var(--ui-border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+
+    .quotes-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .quotes-table th {
+      background: rgba(15, 23, 42, 0.4);
+      padding: 16px 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--ui-text-muted);
+      border-bottom: 1px solid var(--ui-border);
+    }
+
+    .quotes-table td {
+      padding: 16px 20px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--ui-border);
+      color: var(--ui-text);
+      vertical-align: middle;
+    }
+
+    .quotes-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .quotes-table tr {
+      transition: background-color 0.2s;
+    }
+
+    .quotes-table tr:hover {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    .col-filename {
+      font-weight: 600;
+    }
+
+    .filename-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .col-filename svg {
+      color: var(--ui-accent);
+      flex-shrink: 0;
+    }
+
+    .col-filename a {
+      color: var(--ui-text);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .col-filename a:hover {
+      color: var(--ui-accent);
+      text-decoration: underline;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge-shared {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .badge-template {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--ui-accent);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .actions-cell {
+      /* Standard cell styling */
+    }
+
+    .actions-wrapper {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-action {
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      outline: none;
+    }
+
+    .btn-view {
+      background: rgba(79, 70, 229, 0.15);
+      border-color: rgba(79, 70, 229, 0.2);
+      color: #a5b4fc;
+    }
+
+    .btn-view:hover {
+      background: #4f46e5;
+      color: white;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-delete {
+      background: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+    }
+
+    .btn-delete:hover {
+      background: #ef4444;
+      color: white;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-disabled {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px dashed rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.25);
+      cursor: not-allowed;
+    }
+
+    /* Empty state */
+    .empty-state {
+      padding: 60px 20px;
+      text-align: center;
+      color: var(--ui-text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .empty-state svg {
+      color: var(--ui-border);
+    }
+
+    /* CSS cho Dialog cảnh báo và xác nhận xóa */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(9, 13, 22, 0.85);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-container {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 450px;
+      padding: 24px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+      transform: scale(0.9);
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-overlay.active .modal-container {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fca5a5;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-warning-icon {
+      color: #ef4444;
+      flex-shrink: 0;
+    }
+
+    .modal-body {
+      font-size: 14px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .modal-quote-name {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid #334155;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #f59e0b;
+      margin-top: 10px;
+      word-break: break-all;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .modal-btn {
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    .modal-btn-cancel {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: #334155;
+      color: #94a3b8;
+    }
+
+    .modal-btn-cancel:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #f8fafc;
+    }
+
+    .modal-btn-confirm {
+      background: #ef4444;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+    }
+
+    .modal-btn-confirm:hover {
+      background: #dc2626;
+      box-shadow: 0 4px 16px rgba(239, 68, 68, 0.35);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-title-box">
+        <img class="header-logo" src="../Images/logo-evg.png" alt="EVG Logo">
+        <div class="header-title">
+          <h1>Lịch Sử Chia Sẻ Báo Giá</h1>
+          <p>Quản lý các file báo giá HTML đã lưu và xuất trực tuyến trong thư mục Service_quote</p>
+        </div>
+      </div>
+      <a href="builder.html" class="btn-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Tạo báo giá mới
+      </a>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Tổng số báo giá</span>
+          <span class="stat-value" id="stats-count">0</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+            </path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Tổng dung lượng lưu trữ</span>
+          <span class="stat-value" id="stats-size">0 KB</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Thư mục làm việc</span>
+          <span class="stat-value" style="font-size: 14px; font-weight: 600;">/Service_quote</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTROL PANEL (SEARCH) -->
+    <div class="control-panel">
+      <div class="search-wrapper">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="search-input" class="search-input"
+          placeholder="Nhập tên file báo giá để tìm kiếm nhanh..." oninput="filterQuotes(this.value)" />
+      </div>
+    </div>
+
+    <!-- MAIN TABLE -->
+    <div class="table-container">
+      <table class="quotes-table">
+        <thead>
+          <tr>
+            <th style="width: 5%; text-align: center;">STT</th>
+            <th style="width: 40%;">Tên file báo giá</th>
+            <th style="width: 20%;">Thời gian chia sẻ</th>
+            <th style="width: 12%;">Dung lượng</th>
+            <th style="width: 10%;">Trạng thái</th>
+            <th style="width: 13%;">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="quotes-list">
+          <!-- Load dynamically -->
+        </tbody>
+      </table>
+      <div id="empty-state" class="empty-state" style="display: none;">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="8" y1="12" x2="16" y2="12"></line>
+        </svg>
+        <h3>Không tìm thấy báo giá nào</h3>
+        <p>Vui lòng thử từ khóa khác hoặc quay lại tạo báo giá mới.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let allQuotes = [];
+
+    function init() {
+      loadQuotesList();
+    }
+
+    function loadQuotesList() {
+      const tbody = document.getElementById('quotes-list');
+      const emptyState = document.getElementById('empty-state');
+
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--ui-text-muted); padding:40px;">Đang tải danh sách báo giá...</td></tr>';
+      emptyState.style.display = 'none';
+
+      if (window.location.protocol === 'file:') {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#ef4444; padding:40px; font-weight:600;">⚠️ Tính năng lịch sử chỉ hoạt động khi chạy qua server.py (http://localhost:8080)</td></tr>';
+        return;
+      }
+
+      fetch('/api/list-quotes')
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#ef4444; padding:40px;">Lỗi tải dữ liệu: ${data.error}</td></tr>`;
+            return;
+          }
+
+          allQuotes = data;
+          renderTableItems(allQuotes);
+          updateDashboardStats(allQuotes);
+        })
+        .catch(err => {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#ef4444; padding:40px;">Không thể kết nối đến máy chủ. Hãy đảm bảo server.py đang chạy.</td></tr>';
+          console.error(err);
+        });
+    }
+
+    function updateDashboardStats(itemsList) {
+      document.getElementById('stats-count').innerText = itemsList.length;
+      const totalSizeBytes = itemsList.reduce((sum, item) => sum + item.size, 0);
+      document.getElementById('stats-size').innerText = `${(totalSizeBytes / 1024).toFixed(1)} KB`;
+    }
+
+    function renderTableItems(itemsList) {
+      const tbody = document.getElementById('quotes-list');
+      const emptyState = document.getElementById('empty-state');
+
+      if (itemsList.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'flex';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      tbody.innerHTML = '';
+
+      itemsList.forEach((item, index) => {
+        const dateStr = new Date(item.mtime * 1000).toLocaleString('vi-VN');
+        const sizeStr = (item.size / 1024).toFixed(1) + ' KB';
+        const fileUrl = `/Service_quote/${item.filename}`;
+
+        const tr = document.createElement('tr');
+
+        // Status badge
+        const badgeClass = item.is_template ? 'badge badge-template' : 'badge badge-shared';
+        const badgeText = item.is_template ? 'Hệ thống' : 'Đã chia sẻ';
+
+        // Actions
+        let actionButtons = '';
+        if (item.is_template) {
+          actionButtons = `
+            <a href="${fileUrl}" target="_blank" class="btn-action btn-view">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              Xem
+            </a>
+            <button class="btn-action btn-disabled" title="File mẫu hệ thống, không được phép xóa" disabled>Mẫu</button>
+          `;
+        } else {
+          actionButtons = `
+            <a href="${fileUrl}" target="_blank" class="btn-action btn-view">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              Xem
+            </a>
+            <a href="/price/builder.html?edit=${item.filename}" class="btn-action btn-view" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.2); color: #a7f3d0;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+              Sửa
+            </a>
+            <button class="btn-action btn-delete btn-delete-quote" data-filename="${item.filename}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              Xóa
+            </button>
+          `;
+        }
+
+        tr.innerHTML = `
+          <td style="text-align: center; color: var(--ui-text-muted); font-weight: 500;">${index + 1}</td>
+          <td class="col-filename">
+            <div class="filename-wrapper">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+              <a href="${fileUrl}" target="_blank">${item.filename}</a>
+            </div>
+          </td>
+          <td style="color: var(--ui-text-muted);">${dateStr}</td>
+          <td style="font-weight: 500;">${sizeStr}</td>
+          <td><span class="${badgeClass}">${badgeText}</span></td>
+          <td class="actions-cell">
+            <div class="actions-wrapper">
+              ${actionButtons}
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Bind delete events dynamically
+      document.querySelectorAll('.btn-delete-quote').forEach(btn => {
+        btn.onclick = function() {
+          const filename = this.getAttribute('data-filename');
+          openDeleteModal(filename);
+        };
+      });
+    }
+
+    function filterQuotes(query) {
+      const filtered = allQuotes.filter(item =>
+        item.filename.toLowerCase().includes(query.toLowerCase())
+      );
+      renderTableItems(filtered);
+    }
+
+    let filenameToDelete = null;
+
+    function openDeleteModal(filename) {
+      filenameToDelete = filename;
+      document.getElementById('delete-modal-filename').innerText = filename;
+      document.getElementById('delete-confirm-modal').classList.add('active');
+    }
+
+    function closeDeleteModal() {
+      filenameToDelete = null;
+      document.getElementById('delete-confirm-modal').classList.remove('active');
+    }
+
+    function confirmDeleteQuote() {
+      if (!filenameToDelete) return;
+      const filename = filenameToDelete;
+      closeDeleteModal();
+
+      fetch('/api/delete-quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: filename })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            loadQuotesList();
+          } else {
+            alert('Không thể xóa báo giá: ' + (data.error || 'Lỗi không xác định'));
+          }
+        })
+        .catch(err => {
+          alert('Lỗi kết nối khi xóa báo giá.');
+          console.error(err);
+        });
+    }
+
+    // Đóng modal khi bấm phím ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeDeleteModal();
+      }
+    });
+
+    window.onload = init;
+  </script>
+
+  <!-- Modal Xác nhận Xóa -->
+  <div id="delete-confirm-modal" class="modal-overlay" onclick="if (event.target === this) closeDeleteModal()">
+    <div class="modal-container">
+      <div class="modal-header">
+        <svg class="modal-warning-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        <h3 class="modal-title">Cảnh báo xóa báo giá</h3>
+      </div>
+      <div class="modal-body">
+        Bạn có chắc chắn muốn xóa vĩnh viễn báo giá sau không? Hành động này sẽ xóa file khỏi hệ thống và không thể khôi phục lại.
+        <div class="modal-quote-name" id="delete-modal-filename">BG-EVG-xxxx.html</div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn modal-btn-cancel" onclick="closeDeleteModal()">Hủy bỏ</button>
+        <button class="modal-btn modal-btn-confirm" id="delete-modal-confirm-btn" onclick="confirmDeleteQuote()">Xác nhận xóa</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>

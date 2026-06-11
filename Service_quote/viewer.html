@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đang tải báo giá...</title>
+  <style>
+    :root {
+      --brand: #d89b00;
+      --brand-dark: #8f6500;
+      --line: #2f2f2f;
+      --muted: #666;
+      --bg: #ffffff;
+      --soft-row: #fff8e8;
+      --hint: #f7f7f7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.32;
+      font-size: 12px;
+      padding: 20px;
+      background: #f3f4f6;
+      color: #111;
+      display: flex;
+      justify-content: center;
+      margin: 0;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      background: var(--bg);
+      padding: 10mm 10mm 9mm;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .company-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 2px solid var(--brand);
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+    }
+
+    .company-info {
+      flex: 1;
+    }
+
+    .company-info h2 {
+      margin: 0 0 4px;
+      font-size: 17px;
+      line-height: 1.18;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .company-info p {
+      margin: 1px 0;
+      font-size: 11px;
+      color: #333;
+    }
+
+    .logo-box {
+      width: 165px;
+      min-width: 165px;
+      text-align: right;
+    }
+
+    .logo-box img {
+      max-width: 160px;
+      max-height: 60px;
+      object-fit: contain;
+      display: inline-block;
+    }
+
+    .title {
+      text-align: center;
+      margin: 6px 0 10px;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 21px;
+      text-transform: uppercase;
+      letter-spacing: .2px;
+      font-weight: bold;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .card {
+      border: 1px solid #bdbdbd;
+      padding: 8px 10px;
+      border-radius: 4px;
+      background: #fff;
+      min-width: 0;
+    }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: var(--brand-dark);
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 3px;
+      font-weight: bold;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 3px 8px;
+      font-size: 11px;
+    }
+
+    .info-grid .label {
+      font-weight: bold;
+      color: #222;
+    }
+
+    .info-grid .val-text {
+      color: #111;
+    }
+
+    .note-box {
+      margin: 8px 0 10px;
+      padding: 8px 10px;
+      border: 1px dashed #c9c9c9;
+      background: var(--hint);
+      font-size: 11px;
+      color: #333;
+    }
+
+    .preview-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      margin-top: 6px;
+    }
+
+    .preview-table th,
+    .preview-table td {
+      border: 1px solid var(--line);
+      padding: 6px 5px;
+      vertical-align: middle;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      color: #000;
+    }
+
+    .preview-table th {
+      background: #f1f1f1;
+      text-align: center;
+      font-size: 10.6px;
+      line-height: 1.18;
+      font-weight: bold;
+    }
+
+    .preview-table td {
+      font-size: 10.9px;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .stt {
+      text-align: center;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .num {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .summary-row td {
+      background: var(--soft-row);
+      font-weight: bold;
+    }
+
+    .terms {
+      margin-top: 10px;
+      border: 1px solid #cfcfcf;
+      border-radius: 4px;
+      padding: 8px 10px;
+      background: #fff;
+    }
+
+    .terms h3 {
+      margin: 0 0 6px;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: var(--brand-dark);
+      font-weight: bold;
+    }
+
+    .terms ol {
+      margin: 5px 0 0;
+      padding-left: 16px;
+      font-size: 11px;
+      color: #333;
+    }
+
+    .footer {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .sign {
+      width: 46%;
+      text-align: center;
+      min-height: 84px;
+      font-size: 11px;
+      color: #111;
+    }
+
+    .sign .spacer {
+      height: 42px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .btn-print {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #f59e0b;
+      color: #0f172a;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      transition: all 0.2s;
+      z-index: 9999;
+    }
+
+    .btn-print:hover {
+      background: #d97706;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    }
+
+    .btn-print svg {
+      stroke: currentColor;
+    }
+
+    .error-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+      border-radius: 8px;
+      color: #991b1b;
+      max-width: 500px;
+      margin: 40px auto;
+      text-align: center;
+    }
+
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    @media print {
+      .btn-print {
+        display: none !important;
+      }
+      body {
+        display: block !important;
+        background: #fff;
+        padding: 0;
+        margin: 0;
+      }
+      .page {
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 12mm 12mm 10mm !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        page-break-after: avoid;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="loading-spinner" style="text-align: center; padding: 50px; font-size: 16px; color: #666;">
+    Đang tải dữ liệu báo giá...
+  </div>
+
+  <div id="error-box" style="display: none;" class="error-container">
+    <h3 style="margin-top: 0;">Không thể tải báo giá</h3>
+    <p id="error-message">Đường dẫn không hợp lệ hoặc tệp cấu hình không tồn tại trên máy chủ.</p>
+    <button onclick="window.location.href='/price/history.html'" style="padding: 8px 16px; background: #dc2626; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Xem Lịch sử</button>
+  </div>
+
+  <div class="page" id="print-page" style="display: none;">
+    <!-- Company Header -->
+    <div class="company-header">
+      <div class="company-info">
+        <h2>CÔNG TY CỔ PHẦN EVEREST TOÀN CẦU</h2>
+        <p><strong>Add:</strong> Số 117, ngõ 233, Đ Chiến Thắng, P.Hà Đông, Việt Nam</p>
+        <p><strong>VPGD:</strong> B2 Roman Plaza, Đường Tố Hữu, P.Đại Mỗ, Hà Nội</p>
+        <p><strong>Tel:</strong> 0985386150 - 0888425385</p>
+        <p><strong>Email:</strong> contact@evgcorp.net</p>
+        <p><strong>MST:</strong> 0108836791</p>
+      </div>
+      <div class="logo-box">
+        <img src="../Images/logo-evg.png" alt="EVG logo" />
+      </div>
+    </div>
+
+    <!-- Title -->
+    <div class="title">
+      <h1>BÁO GIÁ DỊCH VỤ VPS</h1>
+    </div>
+
+    <!-- Two Cards Info -->
+    <div class="two-col">
+      <div class="card">
+        <h3>Thông tin khách hàng</h3>
+        <div class="info-grid">
+          <div class="label">Tên khách hàng</div>
+          <div class="val-text" id="lbl-client-name">Quý Khách Hàng</div>
+          <div class="label">Điện thoại</div>
+          <div class="val-text"></div>
+          <div class="label">Email</div>
+          <div class="val-text"></div>
+          <div class="label">Địa chỉ</div>
+          <div class="val-text" id="lbl-client-address"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Thông tin báo giá</h3>
+        <div class="info-grid">
+          <div class="label">Số báo giá</div>
+          <div class="val-text" id="lbl-quote-number">BG-EVG</div>
+          <div class="label">Ngày báo giá</div>
+          <div class="val-text" id="lbl-quote-date">--/--/----</div>
+          <div class="label">Phụ trách KD</div>
+          <div class="val-text"></div>
+          <div class="label">Điện thoại</div>
+          <div class="val-text"></div>
+          <div class="label">Email</div>
+          <div class="val-text"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Note box -->
+    <div class="note-box">
+      Công ty cổ phần Everest Toàn Cầu (EVG) xin gửi đến quý khách hàng bản báo giá dịch vụ/hạ tầng máy chủ ảo Cloud
+      VPS, chi tiết báo giá như sau:
+    </div>
+
+    <!-- Services Table -->
+    <table class="preview-table">
+      <thead>
+        <!-- Filled dynamically -->
+      </thead>
+      <tbody id="preview-table-body">
+        <!-- Filled dynamically -->
+      </tbody>
+    </table>
+
+    <!-- Terms -->
+    <div class="terms">
+      <h3>Điều khoản thương mại</h3>
+      <ol>
+        <li>Hiệu lực của báo giá: 07 ngày</li>
+        <li>Hỗ trợ tích hợp, xử lý sự cố 24/7</li>
+        <li>Thanh toán: Chuyển khoản VND</li>
+        <li>Thông tin chuyển khoản thanh toán:<br>
+          <strong>STK CTY:</strong> CÔNG TY CỔ PHẦN EVEREST TOÀN CẦU<br>
+          <strong>STK:</strong> 1111125038586 - Ngân hàng Quân Đội - Chi nhánh Trần Duy Hưng
+        </li>
+      </ol>
+    </div>
+
+    <!-- Signatures -->
+    <div class="footer">
+      <div class="sign">
+        <strong>ĐẠI DIỆN ĐƠN VỊ BÁO GIÁ</strong>
+        <div class="spacer"></div>
+        <div class="muted">(Ký, ghi rõ họ tên)</div>
+      </div>
+      <div class="sign">
+        <strong>KHÁCH HÀNG</strong>
+        <div class="spacer"></div>
+        <div class="muted">(Ký, ghi rõ họ tên)</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-print" id="btn-print-pdf" onclick="window.print()" style="display: none;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <polyline points="6 9 6 2 18 2 18 9"></polyline>
+      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+      <rect x="6" y="14" width="12" height="8"></rect>
+    </svg>
+    Xuất file PDF
+  </button>
+
+  <script>
+    function fmt(val) {
+      return new Intl.NumberFormat('vi-VN').format(Math.round(val));
+    }
+
+    window.onload = function() {
+      // Determine the config json path from the URL
+      const pathParts = window.location.pathname.split('/');
+      const htmlFilename = pathParts[pathParts.length - 1];
+      
+      if (!htmlFilename || !htmlFilename.endsWith('.html')) {
+        showError("Tên file báo giá không hợp lệ.");
+        return;
+      }
+
+      const jsonFilename = htmlFilename.replace('.html', '.json');
+      // Request the JSON file (which server will serve statically)
+      fetch(`/Service_quote/${jsonFilename}`)
+        .then(res => {
+          if (!res.ok) {
+            throw new Error("Không tìm thấy dữ liệu báo giá trên máy chủ.");
+          }
+          return res.json();
+        })
+        .then(data => {
+          renderQuote(data);
+        })
+        .catch(err => {
+          showError(err.message);
+        });
+    };
+
+    function showError(msg) {
+      document.getElementById('loading-spinner').style.display = 'none';
+      document.getElementById('error-message').innerText = msg;
+      document.getElementById('error-box').style.display = 'block';
+    }
+
+    function renderQuote(data) {
+      // Set Document Title
+      document.title = data.quote_number || 'BG-EVG';
+
+      // Update basic fields
+      document.getElementById('lbl-quote-number').innerText = data.quote_number || 'BG-EVG';
+      document.getElementById('lbl-quote-date').innerText = data.quote_date || '--/--/----';
+      document.getElementById('lbl-client-name').innerText = data.client_name || 'Quý Khách Hàng';
+      document.getElementById('lbl-client-address').innerText = data.client_address !== undefined ? data.client_address : '';
+
+      // Config values
+      const rate = parseFloat(data.rate_usd) || 26500;
+      const rateCpu = parseFloat(data.price_cpu) || 3.0;
+      const rateRam = parseFloat(data.price_ram) || 3.5;
+      const rateSsd = parseFloat(data.price_ssd) || 0.1;
+      const rateHdd = parseFloat(data.price_hdd) || 0.06;
+      const rateIp = parseFloat(data.price_ip) || 3.0;
+
+      const showDiscount = data.discount_option === 'yes';
+      const colSpanCount = showDiscount ? 8 : 7;
+      const totalCols = showDiscount ? 9 : 8;
+
+      const previewTable = document.querySelector('.preview-table');
+      
+      // Update Table Header
+      let theadHtml = '';
+      if (showDiscount) {
+        theadHtml = `
+          <tr>
+            <th style="width: 4%;" class="stt">STT</th>
+            <th style="width: 20%;">Tên gói / Hạng mục</th>
+            <th style="width: 28%;">Cấu hình / Mô tả dịch vụ</th>
+            <th style="width: 10%;">Đơn vị tính</th>
+            <th style="width: 11%;">Đơn giá<br>(VND)</th>
+            <th style="width: 4%;">SL</th>
+            <th style="width: 8%;">Số tháng</th>
+            <th style="width: 5%;">CK</th>
+            <th style="width: 10%;">Thành tiền<br>(VND)</th>
+          </tr>
+        `;
+      } else {
+        theadHtml = `
+          <tr>
+            <th style="width: 4%;" class="stt">STT</th>
+            <th style="width: 21%;">Tên gói / Hạng mục</th>
+            <th style="width: 30%;">Cấu hình / Mô tả dịch vụ</th>
+            <th style="width: 10%;">Đơn vị tính</th>
+            <th style="width: 12%;">Đơn giá<br>(VND)</th>
+            <th style="width: 4%;">SL</th>
+            <th style="width: 9%;">Số tháng</th>
+            <th style="width: 10%;">Thành tiền<br>(VND)</th>
+          </tr>
+        `;
+      }
+      previewTable.querySelector('thead').innerHTML = theadHtml;
+
+      const tbody = document.getElementById('preview-table-body');
+      tbody.innerHTML = '';
+
+      const items = data.items || [];
+      if (items.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="${totalCols}" class="center" style="padding: 20px; color: #888;">Không có máy chủ ảo nào trong báo giá.</td>
+          </tr>
+        `;
+      } else {
+        // Group Header Row
+        const groupHeader = document.createElement('tr');
+        groupHeader.innerHTML = `
+          <td class="stt">1</td>
+          <td colspan="${colSpanCount}"><strong>Nhóm dịch vụ:</strong> Cloud VPS (Cấu hình tùy chỉnh)</td>
+        `;
+        tbody.appendChild(groupHeader);
+
+        let totalBeforeVat = 0;
+
+        items.forEach((item, index) => {
+          // Calculate original unit price in USD
+          const itemUsd = (item.cpu * rateCpu) +
+            (item.ram * rateRam) +
+            (item.ssd * rateSsd) +
+            (item.hdd * rateHdd) +
+            ((item.ip_addon || 0) * rateIp);
+
+          // Convert to VND
+          const itemVndBase = itemUsd * rate;
+
+          // Apply discount and calculate total for this row
+          const rowTotalBeforeDiscount = itemVndBase * item.sl * item.month;
+          const rowTotalAfterDiscount = rowTotalBeforeDiscount * (1 - ((item.discount || 0) / 100));
+
+          totalBeforeVat += rowTotalAfterDiscount;
+
+          // Build config description string
+          let configStr = `${item.cpu} vCPU / ${item.ram} GB RAM / ${item.ssd} GB SSD`;
+          if (item.hdd > 0) {
+            configStr += ` + ${item.hdd} GB HDD`;
+          }
+          if (item.ip_addon > 0) {
+            configStr += ` + ${item.ip_addon} IP Add-on`;
+          }
+
+          // Build name cell
+          let nameHtml = `<strong>${item.name || 'VPS'}</strong>`;
+
+          const row = document.createElement('tr');
+          if (showDiscount) {
+            row.innerHTML = `
+              <td class="stt">1.${index + 1}</td>
+              <td>${nameHtml}</td>
+              <td>${configStr}</td>
+              <td class="center">Máy chủ/tháng</td>
+              <td class="num">${fmt(itemVndBase)}</td>
+              <td class="center">${item.sl}</td>
+              <td class="center">${item.month}</td>
+              <td class="center">${item.discount || 0}%</td>
+              <td class="num">${fmt(rowTotalAfterDiscount)}</td>
+            `;
+          } else {
+            row.innerHTML = `
+              <td class="stt">1.${index + 1}</td>
+              <td>${nameHtml}</td>
+              <td>${configStr}</td>
+              <td class="center">Máy chủ/tháng</td>
+              <td class="num">${fmt(itemVndBase * (1 - ((item.discount || 0) / 100)))}</td>
+              <td class="center">${item.sl}</td>
+              <td class="center">${item.month}</td>
+              <td class="num">${fmt(rowTotalAfterDiscount)}</td>
+            `;
+          }
+          tbody.appendChild(row);
+        });
+
+        // Summary lines
+        const vatOption = data.vat_option || 'yes';
+
+        if (vatOption === 'yes') {
+          const vat = totalBeforeVat * 0.1;
+          const totalWithVat = totalBeforeVat * 1.1;
+
+          const r1 = document.createElement('tr');
+          r1.className = 'summary-row';
+          r1.innerHTML = `
+            <td colspan="${colSpanCount}" class="num">Tổng tiền dịch vụ (Chưa VAT)</td>
+            <td class="num">${fmt(totalBeforeVat)}</td>
+          `;
+          tbody.appendChild(r1);
+
+          const r2 = document.createElement('tr');
+          r2.className = 'summary-row';
+          r2.innerHTML = `
+            <td colspan="${colSpanCount}" class="num">Thuế VAT 10%</td>
+            <td class="num">${fmt(vat)}</td>
+          `;
+          tbody.appendChild(r2);
+
+          const r3 = document.createElement('tr');
+          r3.className = 'summary-row';
+          r3.innerHTML = `
+            <td colspan="${colSpanCount}" class="num">Tổng cộng tiền thanh toán (Gồm VAT)</td>
+            <td class="num">${fmt(totalWithVat)}</td>
+          `;
+          tbody.appendChild(r3);
+        } else {
+          const r1 = document.createElement('tr');
+          r1.className = 'summary-row';
+          r1.innerHTML = `
+            <td colspan="${colSpanCount}" class="num">Tổng cộng tiền thanh toán (Chưa VAT)</td>
+            <td class="num">${fmt(totalBeforeVat)}</td>
+          `;
+          tbody.appendChild(r1);
+        }
+      }
+
+      // Hide loading and show page
+      document.getElementById('loading-spinner').style.display = 'none';
+      document.getElementById('print-page').style.display = 'block';
+      document.getElementById('btn-print-pdf').style.display = 'flex';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+{
+  "quote_number": "BG-EVG-202606111157",
+  "quote_date": "11/06/2026",
+  "client_name": "Quý Khách Hàng",
+  "client_address": "Hà Nội",
+  "vat_option": "yes",
+  "discount_option": "yes",
+  "rate_usd": 26500,
+  "price_cpu": 3,
+  "price_ram": 3.5,
+  "price_ssd": 0.1,
+  "price_hdd": 0.06,
+  "price_ip": 3,
+  "items": [
+    {
+      "name": "e.tiny",
+      "group": "Cloud VPS",
+      "os": "Ubuntu",
+      "cpu": 1,
+      "ram": 2,
+      "ssd": 50,
+      "hdd": 0,
+      "ip_addon": 0,
+      "sl": 1,
+      "month": 1,
+      "discount": 20
+    },
+    {
+      "name": "e.small",
+      "group": "Cloud VPS",
+      "os": "Ubuntu",
+      "cpu": 2,
+      "ram": 4,
+      "ssd": 50,
+      "hdd": 0,
+      "ip_addon": 0,
+      "sl": 1,
+      "month": 1,
+      "discount": 20
+    },
+    {
+      "name": "e.medium",
+      "group": "Cloud VPS",
+      "os": "Ubuntu",
+      "cpu": 4,
+      "ram": 8,
+      "ssd": 50,
+      "hdd": 0,
+      "ip_addon": 0,
+      "sl": 1,
+      "month": 1,
+      "discount": 20
+    }
+  ]
+}

@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Công cụ Tạo Báo Giá VPS EVG</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand: #d89b00;
+      --brand-dark: #8f6500;
+      --brand-light: #fff8e8;
+      --line: #2f2f2f;
+      --muted: #666;
+      --bg: #ffffff;
+      --soft-row: #fff8e8;
+      --hint: #f7f7f7;
+
+      /* Dashboard UI Colors */
+      --ui-bg: #0f172a;
+      --ui-card: #1e293b;
+      --ui-border: #334155;
+      --ui-text: #f8fafc;
+      --ui-text-muted: #94a3b8;
+      --ui-accent: #f59e0b;
+      --ui-accent-hover: #d97706;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #090d16;
+      color: var(--ui-text);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Layout structure */
+    .app-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Sidebar Editor */
+    .editor-panel {
+      width: 480px;
+      min-width: 480px;
+      background: var(--ui-bg);
+      border-right: 1px solid var(--ui-border);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .editor-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--ui-border);
+      background: rgba(30, 41, 59, 0.5);
+    }
+
+    .editor-header h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ui-accent);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .editor-header p {
+      margin: 5px 0 0;
+      font-size: 12px;
+      color: var(--ui-text-muted);
+    }
+
+    .editor-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--ui-text-muted);
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--ui-border);
+      padding-bottom: 6px;
+    }
+
+    .form-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .input-box {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .input-box.full-width {
+      grid-column: span 2;
+    }
+
+    label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--ui-text-muted);
+    }
+
+    input,
+    select,
+    textarea {
+      background: var(--ui-card);
+      border: 1px solid var(--ui-border);
+      color: var(--ui-text);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--ui-accent);
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+    }
+
+    /* VPS Items Table in Editor */
+    .vps-list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .vps-item-card {
+      background: var(--ui-card);
+      border: 1px solid var(--ui-border);
+      border-radius: 8px;
+      padding: 12px;
+      position: relative;
+    }
+
+    .vps-item-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--ui-accent);
+    }
+
+    .vps-item-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .btn-delete {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .btn-delete:hover {
+      background: #dc2626;
+    }
+
+    .btn-add {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+
+    .btn-add:hover {
+      background: #059669;
+    }
+
+    /* Live Preview Panel */
+    .preview-panel {
+      flex: 1;
+      background: #334155;
+      padding: 30px;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    /* A4 Print Page Mockup */
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      background: var(--bg);
+      color: #111;
+      padding: 10mm 10mm 9mm;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+      position: relative;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.32;
+      font-size: 12px;
+    }
+
+    .company-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 2px solid var(--brand);
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+    }
+
+    .company-info {
+      flex: 1;
+    }
+
+    .company-info h2 {
+      margin: 0 0 4px;
+      font-size: 17px;
+      line-height: 1.18;
+      text-transform: uppercase;
+      color: #111;
+      font-weight: bold;
+    }
+
+    .company-info p {
+      margin: 1px 0;
+      font-size: 11px;
+      color: #333;
+    }
+
+    .logo-box {
+      width: 165px;
+      min-width: 165px;
+      text-align: right;
+    }
+
+    .logo-box img {
+      max-width: 160px;
+      max-height: 60px;
+      object-fit: contain;
+      display: inline-block;
+    }
+
+    .title {
+      text-align: center;
+      margin: 6px 0 10px;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 21px;
+      text-transform: uppercase;
+      letter-spacing: .2px;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .card {
+      border: 1px solid #bdbdbd;
+      padding: 8px 10px;
+      border-radius: 4px;
+      background: #fff;
+      min-width: 0;
+    }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: var(--brand-dark);
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 3px;
+      font-weight: bold;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 3px 8px;
+      font-size: 11px;
+    }
+
+    .info-grid .label {
+      font-weight: bold;
+      color: #222;
+    }
+
+    .info-grid .val-text {
+      color: #111;
+    }
+
+    .note-box {
+      margin: 8px 0 10px;
+      padding: 8px 10px;
+      border: 1px dashed #c9c9c9;
+      background: var(--hint);
+      font-size: 11px;
+      color: #333;
+    }
+
+    /* Table on A4 */
+    .preview-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      margin-top: 6px;
+    }
+
+    .preview-table th,
+    .preview-table td {
+      border: 1px solid var(--line);
+      padding: 6px 5px;
+      vertical-align: middle;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      color: #000;
+    }
+
+    .preview-table th {
+      background: #f1f1f1;
+      text-align: center;
+      font-size: 10.6px;
+      line-height: 1.18;
+      font-weight: bold;
+    }
+
+    .preview-table td {
+      font-size: 10.9px;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .stt {
+      text-align: center;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .num {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .summary-row td {
+      background: var(--soft-row);
+      font-weight: bold;
+    }
+
+    .terms {
+      margin-top: 10px;
+      border: 1px solid #cfcfcf;
+      border-radius: 4px;
+      padding: 8px 10px;
+      background: #fff;
+    }
+
+    .terms h3 {
+      margin: 0 0 6px;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: var(--brand-dark);
+      font-weight: bold;
+    }
+
+    .terms ol {
+      margin: 5px 0 0;
+      padding-left: 16px;
+      font-size: 11px;
+      color: #333;
+    }
+
+    .footer {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .sign {
+      width: 46%;
+      text-align: center;
+      min-height: 84px;
+      font-size: 11px;
+      color: #111;
+    }
+
+    .sign .spacer {
+      height: 42px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    /* Action bar */
+    .action-bar {
+      padding: 20px;
+      border-top: 1px solid var(--ui-border);
+      display: flex;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.8);
+    }
+
+    .btn-action {
+      flex: 1;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--ui-accent);
+      color: #0f172a;
+    }
+
+    .btn-primary:hover {
+      background: var(--ui-accent-hover);
+    }
+
+    .btn-secondary {
+      background: var(--ui-card);
+      color: var(--ui-text);
+      border: 1px solid var(--ui-border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--ui-border);
+    }
+
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: #fff;
+        color: #000;
+        height: auto;
+        overflow: visible;
+      }
+
+      .editor-panel {
+        display: none !important;
+      }
+
+      .preview-panel {
+        background: #fff !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        display: block !important;
+      }
+
+      .page {
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 12mm 12mm 10mm !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        page-break-after: avoid;
+        page-break-inside: avoid;
+      }
+    }
+
+    /* Share Modal Styles */
+    .share-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(8, 10, 16, 0.6);
+      backdrop-filter: blur(12px) saturate(180%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 11000;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+    }
+
+    .share-modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .share-modal-content {
+      background: rgba(30, 41, 59, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      width: 480px;
+      max-width: 90%;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 24px 38px 3px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+      transform: scale(0.93) translateY(10px);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      backdrop-filter: blur(10px);
+    }
+
+    .share-modal-overlay.active .share-modal-content {
+      transform: scale(1) translateY(0);
+    }
+
+    .share-icon-success {
+      width: 60px;
+      height: 60px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      animation: scaleUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes scaleUp {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .share-modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ui-text);
+      margin: 0 0 8px;
+    }
+
+    .share-modal-desc {
+      font-size: 13px;
+      color: var(--ui-text-muted);
+      margin: 0 0 24px;
+    }
+
+    .share-url-container {
+      display: flex;
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px solid var(--ui-border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      margin-bottom: 24px;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .share-url-input {
+      background: transparent !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      color: var(--ui-accent) !important;
+      font-size: 13px;
+      font-family: inherit;
+      width: 100%;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      padding: 6px 0 !important;
+    }
+
+    .share-modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .btn-share-act {
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      outline: none;
+    }
+
+    .btn-share-copy {
+      background: #4f46e5;
+      color: white;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    }
+
+    .btn-share-copy:hover {
+      background: #4338ca;
+      transform: translateY(-1px);
+    }
+
+    .btn-share-copy.copied {
+      background: #10b981;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .btn-share-open {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--ui-border);
+      color: var(--ui-text);
+    }
+
+    .btn-share-open:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .btn-share-close {
+      background: transparent;
+      color: var(--ui-text-muted);
+    }
+
+    .btn-share-close:hover {
+      color: var(--ui-text);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-container">
+
+    <!-- LEFT PANEL: EDITOR -->
+    <div class="editor-panel">
+      <div class="editor-header">
+        <h1>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          EVG Quote Builder
+        </h1>
+        <p>Tạo báo giá chuẩn hóa cấu hình VPS & tự động tính giá</p>
+      </div>
+
+      <div class="editor-content">
+        <!-- COMPANY & CLIENT DATA -->
+        <div>
+          <div class="section-title">Thông tin chung</div>
+          <div class="form-group">
+            <div class="input-box">
+              <label style="display:flex; justify-content:space-between; align-items:center;">
+                <span>Số báo giá</span>
+                <span style="color:var(--ui-accent); cursor:pointer; font-size:9px;"
+                  onclick="generateQuoteNumberAndDate(); updatePreview();">🔄 Tự động</span>
+              </label>
+              <input type="text" id="quote-number" value="" oninput="updatePreview()" />
+            </div>
+            <div class="input-box">
+              <label>Ngày báo giá</label>
+              <input type="text" id="quote-date" value="" oninput="updatePreview()" />
+            </div>
+            <div class="input-box full-width">
+              <label>Tên khách hàng</label>
+              <input type="text" id="client-name" value="Quý Khách Hàng" oninput="updatePreview()" />
+            </div>
+            <div class="input-box full-width">
+              <label>Địa chỉ khách hàng</label>
+              <input type="text" id="client-address" value="" oninput="updatePreview()" />
+            </div>
+            <div class="input-box">
+              <label>Thuế VAT</label>
+              <select id="vat-option" onchange="updatePreview()">
+                <option value="yes" selected>Có VAT 10%</option>
+                <option value="no">Không VAT</option>
+              </select>
+            </div>
+            <div class="input-box">
+              <label>Cột Chiết khấu</label>
+              <select id="discount-option" onchange="updatePreview()">
+                <option value="yes" selected>Có hiển thị</option>
+                <option value="no">Ẩn cột CK</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRICING BASE CONFIG -->
+        <div>
+          <div class="section-title">Thông số giá gốc & Tỷ giá</div>
+          <div class="form-group">
+            <div class="input-box">
+              <label>Tỷ giá USD/VND</label>
+              <input type="number" id="rate-usd" value="26500" oninput="updatePreview()" />
+            </div>
+            <div class="input-box">
+              <label>Giá vCPU ($/tháng)</label>
+              <input type="number" step="0.1" id="price-cpu" value="3.0" oninput="updatePreview()" />
+            </div>
+            <div class="input-box">
+              <label>Giá RAM ($/GB/tháng)</label>
+              <input type="number" step="0.1" id="price-ram" value="3.5" oninput="updatePreview()" />
+            </div>
+            <div class="input-box">
+              <label>Giá SSD ($/GB/tháng)</label>
+              <input type="number" step="0.01" id="price-ssd" value="0.1" oninput="updatePreview()" />
+            </div>
+            <div class="input-box">
+              <label>Giá HDD ($/GB/tháng)</label>
+              <input type="number" step="0.01" id="price-hdd" value="0.06" oninput="updatePreview()" />
+            </div>
+            <div class="input-box">
+              <label>Giá IP ($/IP/tháng)</label>
+              <input type="number" step="0.1" id="price-ip" value="3.0" oninput="updatePreview()" />
+            </div>
+          </div>
+        </div>
+
+        <!-- DYNAMIC VPS LIST -->
+        <div>
+          <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+            <span>Danh sách VPS</span>
+            <button class="btn-delete" style="background:#555;" onclick="clearAllItems()">Xóa hết</button>
+          </div>
+
+          <div class="vps-list-container" id="vps-items-container">
+            <!-- Dynamic elements will be inserted here -->
+          </div>
+
+          <button class="btn-add" onclick="addNewVPS()" style="margin-top: 15px; width: 100%;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Thêm VPS mới
+          </button>
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn-action btn-secondary" onclick="window.location.href='history.html'"
+          style="background:#1e293b; color:#f8fafc; border:1px solid #334155;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 8v4l3 3"></path>
+            <circle cx="12" cy="12" r="9"></circle>
+          </svg>
+          Lịch sử
+        </button>
+        <button class="btn-action btn-secondary" onclick="shareQuote()"
+          style="background:#4f46e5; color:white; border:none;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+          </svg>
+          Chia sẻ
+        </button>
+        <button class="btn-action btn-primary" onclick="saveQuoteData().finally(() => { window.print(); })">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          In / Xuất PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: LIVE PREVIEW -->
+    <div class="preview-panel">
+      <div class="page" id="print-page">
+        <!-- Company Header -->
+        <div class="company-header">
+          <div class="company-info">
+            <h2>CÔNG TY CỔ PHẦN EVEREST TOÀN CẦU</h2>
+            <p><strong>Add:</strong> Số 117, ngõ 233, Đ Chiến Thắng, P.Hà Đông, Việt Nam</p>
+            <p><strong>VPGD:</strong> B2 Roman Plaza, Đường Tố Hữu, P.Đại Mỗ, Hà Nội</p>
+            <p><strong>Tel:</strong> 0985386150 - 0888425385</p>
+            <p><strong>Email:</strong> contact@evgcorp.net</p>
+            <p><strong>MST:</strong> 0108836791</p>
+          </div>
+          <div class="logo-box">
+            <img src="../Images/logo-evg.png" alt="EVG logo" />
+          </div>
+        </div>
+
+        <!-- Title -->
+        <div class="title">
+          <h1>BÁO GIÁ DỊCH VỤ VPS</h1>
+        </div>
+
+        <!-- Two Cards Info -->
+        <div class="two-col">
+          <div class="card">
+            <h3>Thông tin khách hàng</h3>
+            <div class="info-grid">
+              <div class="label">Tên khách hàng</div>
+              <div class="val-text" id="lbl-client-name">Quý Khách Hàng</div>
+              <div class="label">Điện thoại</div>
+              <div class="val-text"></div>
+              <div class="label">Email</div>
+              <div class="val-text"></div>
+              <div class="label">Địa chỉ</div>
+              <div class="val-text" id="lbl-client-address"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Thông tin báo giá</h3>
+            <div class="info-grid">
+              <div class="label">Số báo giá</div>
+              <div class="val-text" id="lbl-quote-number">BG-EVG-2026-06-001</div>
+              <div class="label">Ngày báo giá</div>
+              <div class="val-text" id="lbl-quote-date">03/06/2026</div>
+              <div class="label">Phụ trách KD</div>
+              <div class="val-text"></div>
+              <div class="label">Điện thoại</div>
+              <div class="val-text"></div>
+              <div class="label">Email</div>
+              <div class="val-text"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Note box -->
+        <div class="note-box">
+          Công ty cổ phần Everest Toàn Cầu (EVG) xin gửi đến quý khách hàng bản báo giá dịch vụ/hạ tầng máy chủ ảo Cloud
+          VPS, chi tiết báo giá như sau:
+        </div>
+
+        <!-- Services Table -->
+        <table class="preview-table">
+          <thead>
+            <tr>
+              <th style="width: 4%;" class="stt">STT</th>
+              <th style="width: 20%;">Tên gói / Hạng mục</th>
+              <th style="width: 28%;">Cấu hình / Mô tả dịch vụ</th>
+              <th style="width: 10%;">Đơn vị tính</th>
+              <th style="width: 11%;">Đơn giá<br>(VND)</th>
+              <th style="width: 4%;">SL</th>
+              <th style="width: 8%;">Số tháng</th>
+              <th style="width: 5%;">CK</th>
+              <th style="width: 10%;">Thành tiền<br>(VND)</th>
+            </tr>
+          </thead>
+          <tbody id="preview-table-body">
+            <!-- Filled dynamically by JavaScript -->
+          </tbody>
+        </table>
+
+        <!-- Terms -->
+        <div class="terms">
+          <h3>Điều khoản thương mại</h3>
+          <ol>
+            <li>Hiệu lực của báo giá: 07 ngày</li>
+            <li>Hỗ trợ tích hợp, xử lý sự cố 24/7</li>
+            <li>Thanh toán: Chuyển khoản VND</li>
+            <li>Thông tin chuyển khoản thanh toán:<br>
+              <strong>STK CTY:</strong> CÔNG TY CỔ PHẦN EVEREST TOÀN CẦU<br>
+              <strong>STK:</strong> 1111125038586 - Ngân hàng Quân Đội - Chi nhánh Trần Duy Hưng
+            </li>
+          </ol>
+        </div>
+
+        <!-- Signatures -->
+        <div class="footer">
+          <div class="sign">
+            <strong>ĐẠI DIỆN ĐƠN VỊ BÁO GIÁ</strong>
+            <div class="spacer"></div>
+            <div class="muted">(Ký, ghi rõ họ tên)</div>
+          </div>
+          <div class="sign">
+            <strong>KHÁCH HÀNG</strong>
+            <div class="spacer"></div>
+            <div class="muted">(Ký, ghi rõ họ tên)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Initial sample items to populate when the app loads
+    const sampleItems = [
+      { name: "e.tiny", group: "Cloud VPS", os: "Ubuntu", cpu: 1, ram: 2, ssd: 50, hdd: 0, ip_addon: 0, sl: 1, month: 1, discount: 20 },
+      { name: "e.small", group: "Cloud VPS", os: "Ubuntu", cpu: 2, ram: 4, ssd: 50, hdd: 0, ip_addon: 0, sl: 1, month: 1, discount: 20 },
+      { name: "e.medium", group: "Cloud VPS", os: "Ubuntu", cpu: 4, ram: 8, ssd: 50, hdd: 0, ip_addon: 0, sl: 1, month: 1, discount: 20 }
+    ];
+
+    let items = [];
+
+    // Helper to format currency
+    function fmt(val) {
+      return new Intl.NumberFormat('vi-VN').format(Math.round(val));
+    }
+
+    // Initialize list
+    function init() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const editFile = urlParams.get('edit');
+      if (editFile) {
+        loadQuoteForEdit(editFile);
+      } else {
+        generateQuoteNumberAndDate();
+        resetToSample();
+      }
+    }
+
+    function loadQuoteForEdit(filename) {
+      if (window.location.protocol === 'file:') {
+        alert("Không thể tải báo giá để chỉnh sửa ở chế độ offline.");
+        generateQuoteNumberAndDate();
+        resetToSample();
+        return;
+      }
+
+      const jsonFilename = filename.endsWith('.html') ? filename.replace('.html', '.json') : filename;
+
+      // Try to load JSON parameters first
+      fetch(`/Service_quote/${jsonFilename}`)
+        .then(res => {
+          if (!res.ok) {
+            // If JSON fails, it might be a legacy HTML quote. Try to fetch and parse HTML!
+            if (filename.endsWith('.html')) {
+              return fetch(`/Service_quote/${filename}`)
+                .then(htmlRes => {
+                  if (!htmlRes.ok) throw new Error("Không tìm thấy file báo giá.");
+                  return htmlRes.text().then(htmlText => parseLegacyHtmlQuote(htmlText, filename));
+                });
+            }
+            throw new Error("Không tìm thấy dữ liệu cấu hình báo giá.");
+          }
+          return res.json();
+        })
+        .then(data => {
+          if (data) {
+            applyLoadedQuoteData(data);
+          }
+        })
+        .catch(err => {
+          alert("Lỗi khi tải dữ liệu báo giá để chỉnh sửa: " + err.message);
+          generateQuoteNumberAndDate();
+          resetToSample();
+        });
+    }
+
+    function parseLegacyHtmlQuote(htmlText, filename) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlText, 'text/html');
+
+      let clientName = "Quý Khách Hàng";
+      let clientAddress = "";
+      let quoteNum = filename.replace('.html', '');
+      let quoteDate = "";
+
+      const cards = doc.querySelectorAll('.card');
+      cards.forEach(card => {
+        const infoGrid = card.querySelector('.info-grid');
+        if (infoGrid) {
+          const divs = Array.from(infoGrid.children);
+          for (let i = 0; i < divs.length; i += 2) {
+            if (i + 1 < divs.length) {
+              const label = divs[i].innerText.trim();
+              const val = divs[i + 1].innerText.trim();
+              if (label.includes("Tên khách hàng")) clientName = val;
+              else if (label.includes("Địa chỉ")) clientAddress = val;
+              else if (label.includes("Số báo giá")) quoteNum = val;
+              else if (label.includes("Ngày báo giá")) quoteDate = val;
+            }
+          }
+        }
+      });
+
+      if (!quoteDate) {
+        const now = new Date();
+        const dd = String(now.getDate()).padStart(2, '0');
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const yyyy = now.getFullYear();
+        quoteDate = `${dd}/${mm}/${yyyy}`;
+      }
+
+      let vatOption = "no";
+      const htmlLower = htmlText.toLowerCase();
+      if (htmlLower.includes("thuế vat 10%")) {
+        vatOption = "yes";
+      }
+
+      let discountOption = "no";
+      const ths = Array.from(doc.querySelectorAll('table th'));
+      const hasCkHeader = ths.some(th => {
+        const txt = th.innerText.toLowerCase();
+        return txt === 'ck' || txt.includes('chiết khấu') || txt === 'ck%';
+      });
+      if (hasCkHeader) {
+        discountOption = "yes";
+      }
+
+      let rateUsd = 26500;
+      let priceCpu = 3.0;
+      let priceRam = 3.5;
+      let priceSsd = 0.1;
+      let priceHdd = 0.06;
+      let priceIp = 3.0;
+
+      const termsList = Array.from(doc.querySelectorAll('.terms ol li, .terms ul li'));
+      termsList.forEach(li => {
+        const txt = li.innerText.toLowerCase();
+        if (txt.includes("tỷ giá") || txt.includes("ty gia")) {
+          const m = txt.match(/([\d\.,]+)\s*vnd/);
+          if (m) rateUsd = parseFloat(m[1].replace(/\./g, '').replace(',', '.'));
+        }
+        if (txt.includes("cpu") && txt.includes("usd")) {
+          const m = txt.match(/cpu\s*=\s*([\d\.,]+)/);
+          if (m) priceCpu = parseFloat(m[1].replace(',', '.'));
+        }
+        if (txt.includes("ram") && txt.includes("usd")) {
+          const m = txt.match(/ram\s*=\s*([\d\.,]+)/);
+          if (m) priceRam = parseFloat(m[1].replace(',', '.'));
+        }
+        if (txt.includes("ssd") && txt.includes("usd")) {
+          const m = txt.match(/ssd\s*=\s*([\d\.,]+)/);
+          if (m) priceSsd = parseFloat(m[1].replace(',', '.'));
+        }
+      });
+
+      const parsedItems = [];
+      const rows = Array.from(doc.querySelectorAll('table tbody tr'));
+      rows.forEach(row => {
+        const tds = Array.from(row.querySelectorAll('td'));
+        if (tds.length >= 6) {
+          const stt = tds[0].innerText.trim();
+          if (/^1\.\d+$/.test(stt)) {
+            const name = tds[1].innerText.trim();
+            const desc = tds[2].innerText.trim();
+
+            let cpu = 2;
+            let ram = 4;
+            let ssd = 50;
+            let hdd = 0;
+            let ipAddon = 0;
+
+            const cpuMatch = desc.match(/(\d+)\s*vCPU/i);
+            if (cpuMatch) cpu = parseInt(cpuMatch[1]);
+
+            const ramMatch = desc.match(/(\d+)\s*GB\s*RAM/i);
+            if (ramMatch) ram = parseInt(ramMatch[1]);
+
+            const ssdMatch = desc.match(/(\d+)\s*GB\s*SSD/i);
+            if (ssdMatch) ssd = parseInt(ssdMatch[1]);
+
+            const hddMatch = desc.match(/(\d+)\s*GB\s*HDD/i);
+            if (hddMatch) hdd = parseInt(hddMatch[1]);
+
+            const ipMatch = desc.match(/(\d+)\s*IP/i);
+            if (ipMatch) ipAddon = parseInt(ipMatch[1]);
+
+            let sl = 1;
+            let month = 1;
+            let discount = 0;
+
+            if (tds.length === 9) {
+              sl = parseInt(tds[5].innerText.trim()) || 1;
+              month = parseInt(tds[6].innerText.trim()) || 1;
+              discount = parseInt(tds[7].innerText.trim().replace('%', '')) || 0;
+            } else if (tds.length === 8) {
+              sl = parseInt(tds[5].innerText.trim()) || 1;
+              month = parseInt(tds[6].innerText.trim()) || 1;
+            } else if (tds.length === 10) {
+              sl = parseInt(tds[6].innerText.trim()) || 1;
+              month = parseInt(tds[7].innerText.trim()) || 1;
+              discount = parseInt(tds[8].innerText.trim().replace('%', '')) || 0;
+            }
+
+            parsedItems.push({
+              name: name,
+              cpu: cpu,
+              ram: ram,
+              ssd: ssd,
+              hdd: hdd,
+              ip_addon: ipAddon,
+              sl: sl,
+              month: month,
+              discount: discount
+            });
+          }
+        }
+      });
+
+      return {
+        quote_number: quoteNum,
+        quote_date: quoteDate,
+        client_name: clientName,
+        client_address: clientAddress,
+        vat_option: vatOption,
+        discount_option: discountOption,
+        rate_usd: rateUsd,
+        price_cpu: priceCpu,
+        price_ram: priceRam,
+        price_ssd: priceSsd,
+        price_hdd: priceHdd,
+        price_ip: priceIp,
+        items: parsedItems
+      };
+    }
+
+    function applyLoadedQuoteData(data) {
+      document.getElementById('quote-number').value = data.quote_number || '';
+      document.getElementById('quote-date').value = data.quote_date || '';
+      document.getElementById('client-name').value = data.client_name || 'Quý Khách Hàng';
+      document.getElementById('client-address').value = data.client_address !== undefined ? data.client_address : '';
+      document.getElementById('vat-option').value = data.vat_option || 'yes';
+      document.getElementById('discount-option').value = data.discount_option || 'yes';
+      document.getElementById('rate-usd').value = data.rate_usd || 26500;
+      document.getElementById('price-cpu').value = data.price_cpu || 3.0;
+      document.getElementById('price-ram').value = data.price_ram || 3.5;
+      document.getElementById('price-ssd').value = data.price_ssd || 0.1;
+      document.getElementById('price-hdd').value = data.price_hdd || 0.06;
+      document.getElementById('price-ip').value = data.price_ip || 3.0;
+
+      items = data.items || [];
+      renderEditorList();
+      updatePreview();
+    }
+
+    function generateQuoteNumberAndDate() {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const hh = String(now.getHours()).padStart(2, '0');
+      const min = String(now.getMinutes()).padStart(2, '0');
+
+      const quoteNum = `BG-EVG-${yyyy}${mm}${dd}${hh}${min}`;
+      const quoteDate = `${dd}/${mm}/${yyyy}`;
+
+      document.getElementById('quote-number').value = quoteNum;
+      document.getElementById('quote-date').value = quoteDate;
+    }
+
+    function resetToSample() {
+      items = JSON.parse(JSON.stringify(sampleItems));
+      renderEditorList();
+      updatePreview();
+    }
+
+    function saveQuoteData() {
+      if (window.location.protocol === 'file:') {
+        return Promise.resolve(null);
+      }
+
+      const quoteNum = document.getElementById('quote-number').value || 'BG-EVG';
+      const data = {
+        quote_number: quoteNum,
+        quote_date: document.getElementById('quote-date').value,
+        client_name: document.getElementById('client-name').value,
+        client_address: document.getElementById('client-address').value,
+        vat_option: document.getElementById('vat-option').value,
+        discount_option: document.getElementById('discount-option').value,
+        rate_usd: parseFloat(document.getElementById('rate-usd').value) || 26500,
+        price_cpu: parseFloat(document.getElementById('price-cpu').value) || 3.0,
+        price_ram: parseFloat(document.getElementById('price-ram').value) || 3.5,
+        price_ssd: parseFloat(document.getElementById('price-ssd').value) || 0.1,
+        price_hdd: parseFloat(document.getElementById('price-hdd').value) || 0.06,
+        price_ip: parseFloat(document.getElementById('price-ip').value) || 3.0,
+        items: items
+      };
+
+      return fetch('/api/share-quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: data, filename: quoteNum })
+      })
+        .then(res => res.json())
+        .catch(err => {
+          console.error("Lỗi khi tự động lưu báo giá:", err);
+          return null;
+        });
+    }
+
+    function shareQuote() {
+      const quoteNum = document.getElementById('quote-number').value || 'BG-EVG';
+
+      if (window.location.protocol === 'file:') {
+        const pageHtml = document.getElementById('print-page').outerHTML;
+        const fullHtml = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Báo giá ${quoteNum}</title>
+  <style>
+    :root { --brand:#d89b00; --brand-dark:#8f6500; --line:#2f2f2f; --muted:#666; --bg:#ffffff; --soft-row:#fff8e8; --hint:#f7f7f7; }
+    body { font-family: Arial, Helvetica, sans-serif; line-height: 1.32; font-size: 12px; padding: 20px; background: #f3f4f6; color: #111; display: flex; justify-content: center; }
+    .page { width: 210mm; min-height: 297mm; background: var(--bg); padding: 15mm; box-shadow: 0 8px 24px rgba(0,0,0,0.08); border-radius: 4px; }
+    .company-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; border-bottom: 2px solid var(--brand); padding-bottom: 8px; margin-bottom: 10px; }
+    .company-info { flex: 1; }
+    .company-info h2 { margin: 0 0 4px; font-size: 17px; line-height: 1.18; text-transform: uppercase; font-weight: bold; }
+    .company-info p { margin: 1px 0; font-size: 11px; color: #333; }
+    .logo-box { width: 165px; min-width: 165px; text-align: right; }
+    .logo-box img { max-width: 160px; max-height: 60px; object-fit: contain; display: inline-block; }
+    .title { text-align: center; margin: 6px 0 10px; }
+    .title h1 { margin: 0; font-size: 21px; text-transform: uppercase; letter-spacing: .2px; font-weight: bold; }
+    .two-col { display: grid; grid-template-columns: 1.1fr .9fr; gap: 10px; margin-bottom: 10px; }
+    .card { border: 1px solid #bdbdbd; padding: 8px 10px; border-radius: 4px; background: #fff; min-width: 0; }
+    .card h3 { margin: 0 0 6px; font-size: 12px; text-transform: uppercase; color: var(--brand-dark); border-bottom: 1px solid #ddd; padding-bottom: 3px; font-weight: bold; }
+    .info-grid { display: grid; grid-template-columns: 110px 1fr; gap: 3px 8px; font-size: 11px; }
+    .info-grid .label { font-weight: bold; color: #222; }
+    .info-grid .val-text { color: #111; }
+    .note-box { margin: 8px 0 10px; padding: 8px 10px; border: 1px dashed #c9c9c9; background: var(--hint); font-size: 11px; color: #333; }
+    .preview-table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-top: 6px; }
+    .preview-table th, .preview-table td { border: 1px solid var(--line); padding: 6px 5px; vertical-align: middle; overflow-wrap: anywhere; word-break: break-word; color: #000; }
+    .preview-table th { background: #f1f1f1; text-align: center; font-size: 10.6px; line-height: 1.18; font-weight: bold; }
+    .preview-table td { font-size: 10.9px; }
+    .center { text-align: center; }
+    .stt { text-align: center; vertical-align: middle; white-space: nowrap; }
+    .num { text-align: right; white-space: nowrap; }
+    .summary-row td { background: var(--soft-row); font-weight: bold; }
+    .terms { margin-top: 10px; border: 1px solid #cfcfcf; border-radius: 4px; padding: 8px 10px; background: #fff; }
+    .terms h3 { margin: 0 0 6px; font-size: 12px; text-transform: uppercase; color: var(--brand-dark); font-weight: bold; }
+    .terms ol { margin: 5px 0 0; padding-left: 16px; font-size: 11px; color: #333; }
+    .footer { margin-top: 16px; display: flex; justify-content: space-between; gap: 16px; }
+    .sign { width: 46%; text-align: center; min-height: 84px; font-size: 11px; }
+    .sign .spacer { height: 42px; }
+    .muted { color: var(--muted); }
+    .btn-print {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #f59e0b;
+      color: #0f172a;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      transition: all 0.2s;
+      z-index: 9999;
+    }
+    .btn-print:hover {
+      background: #d97706;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    }
+    .btn-print svg {
+      stroke: currentColor;
+    }
+    @page {
+      size: A4;
+      margin: 0;
+    }
+    @media print {
+      .btn-print { display: none !important; }
+      body { display: block !important; background: #fff; padding: 0; margin: 0; }
+      .page { box-shadow: none !important; margin: 0 !important; padding: 12mm 12mm 10mm !important; width: 210mm !important; height: 297mm !important; page-break-after: avoid; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  ${pageHtml}
+  <button class="btn-print" onclick="window.print()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+    Xuất file PDF
+  </button>
+</body>
+</html>`;
+        alert("Cảnh báo: Bạn đang mở file HTML trực tiếp dưới dạng cục bộ (file:///).\n\nĐể sử dụng tính năng 'Chia sẻ báo giá' online, bạn cần khởi chạy máy chủ server.py trong thư mục dự án và truy cập qua đường dẫn: http://localhost:8080");
+
+        const blob = new Blob([fullHtml], { type: 'text/html' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `${quoteNum}.html`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        return;
+      }
+
+      saveQuoteData()
+        .then(data => {
+          if (data && data.url) {
+            const tempInput = document.createElement('input');
+            tempInput.value = data.url;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            showShareModal(data.url);
+          } else {
+            alert('Có lỗi xảy ra khi tạo liên kết chia sẻ hoặc không thể kết nối server.');
+          }
+        });
+    }
+
+    function clearAllItems() {
+      items = [];
+      renderEditorList();
+      updatePreview();
+    }
+
+    // Render list of inputs in the Sidebar
+    function renderEditorList() {
+      const container = document.getElementById('vps-items-container');
+      container.innerHTML = '';
+
+      items.forEach((item, index) => {
+        const itemCard = document.createElement('div');
+        itemCard.className = 'vps-item-card';
+        itemCard.innerHTML = `
+          <div class="vps-item-card-header">
+            <span>VPS #${index + 1}: ${item.name || 'Chưa đặt tên'}</span>
+            <button class="btn-delete" onclick="removeItem(${index})">Xóa</button>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <div class="input-box full-width">
+                <label>Tên VPS</label>
+                <input type="text" value="${item.name}" oninput="updateItemField(${index}, 'name', this.value)" />
+              </div>
+            </div>
+            
+            <div class="vps-item-grid">
+              <div class="input-box">
+                <label>vCPU</label>
+                <input type="number" min="0" value="${item.cpu}" oninput="updateItemField(${index}, 'cpu', parseInt(this.value) || 0)" />
+              </div>
+              <div class="input-box">
+                <label>RAM (GB)</label>
+                <input type="number" min="0" value="${item.ram}" oninput="updateItemField(${index}, 'ram', parseInt(this.value) || 0)" />
+              </div>
+              <div class="input-box">
+                <label>SSD (GB)</label>
+                <input type="number" min="0" value="${item.ssd}" oninput="updateItemField(${index}, 'ssd', parseInt(this.value) || 0)" />
+              </div>
+              <div class="input-box">
+                <label>HDD (GB)</label>
+                <input type="number" min="0" value="${item.hdd}" oninput="updateItemField(${index}, 'hdd', parseInt(this.value) || 0)" />
+              </div>
+            </div>
+
+            <div class="vps-item-grid">
+              <div class="input-box">
+                <label>IP Add-on</label>
+                <input type="number" min="0" value="${item.ip_addon || 0}" oninput="updateItemField(${index}, 'ip_addon', parseInt(this.value) || 0)" />
+              </div>
+              <div class="input-box">
+                <label>SL</label>
+                <input type="number" min="1" value="${item.sl}" oninput="updateItemField(${index}, 'sl', parseInt(this.value) || 1)" />
+              </div>
+              <div class="input-box">
+                <label>Tháng</label>
+                <input type="number" min="1" value="${item.month}" oninput="updateItemField(${index}, 'month', parseInt(this.value) || 1)" />
+              </div>
+              <div class="input-box">
+                <label>C.Khấu %</label>
+                <input type="number" min="0" max="100" value="${item.discount}" oninput="updateItemField(${index}, 'discount', parseInt(this.value) || 0)" />
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(itemCard);
+      });
+    }
+
+    function updateItemField(index, field, value) {
+      items[index][field] = value;
+      updatePreview();
+      // If we change the name, update just the card title to look responsive
+      if (field === 'name') {
+        const headerSpan = document.querySelectorAll('.vps-item-card-header span')[index];
+        if (headerSpan) headerSpan.innerText = `VPS #${index + 1}: ${value || 'Chưa đặt tên'}`;
+      }
+    }
+
+    function removeItem(index) {
+      items.splice(index, 1);
+      renderEditorList();
+      updatePreview();
+    }
+
+    function addNewVPS() {
+      items.push({
+        name: "VPS mới",
+        group: "Cloud VPS",
+        os: "Ubuntu",
+        cpu: 2,
+        ram: 4,
+        ssd: 50,
+        hdd: 0,
+        ip_addon: 0,
+        sl: 1,
+        month: 1,
+        discount: 20
+      });
+      renderEditorList();
+      updatePreview();
+
+      // Auto scroll container
+      const contentDiv = document.querySelector('.editor-content');
+      contentDiv.scrollTop = contentDiv.scrollHeight;
+    }
+
+    // Recalculate everything and update the A4 print page
+    function updatePreview() {
+      const quoteNum = document.getElementById('quote-number').value || 'BG-EVG';
+      document.title = quoteNum;
+
+      // General Info
+      document.getElementById('lbl-quote-number').innerText = quoteNum;
+      document.getElementById('lbl-quote-date').innerText = document.getElementById('quote-date').value;
+      document.getElementById('lbl-client-name').innerText = document.getElementById('client-name').value;
+      document.getElementById('lbl-client-address').innerText = document.getElementById('client-address').value;
+
+      // Price settings
+      const rate = parseFloat(document.getElementById('rate-usd').value) || 26500;
+      const rateCpu = parseFloat(document.getElementById('price-cpu').value) || 3.0;
+      const rateRam = parseFloat(document.getElementById('price-ram').value) || 3.5;
+      const rateSsd = parseFloat(document.getElementById('price-ssd').value) || 0.1;
+      const rateHdd = parseFloat(document.getElementById('price-hdd').value) || 0.06;
+      const rateIp = parseFloat(document.getElementById('price-ip').value) || 3.0;
+
+      const showDiscount = document.getElementById('discount-option').value === 'yes';
+      const colSpanCount = showDiscount ? 8 : 7;
+      const totalCols = showDiscount ? 9 : 8;
+
+      const previewTable = document.querySelector('.preview-table');
+      // Update header
+      let theadHtml = '';
+      if (showDiscount) {
+        theadHtml = `
+          <tr>
+            <th style="width: 4%;" class="stt">STT</th>
+            <th style="width: 20%;">Tên gói / Hạng mục</th>
+            <th style="width: 28%;">Cấu hình / Mô tả dịch vụ</th>
+            <th style="width: 10%;">Đơn vị tính</th>
+            <th style="width: 11%;">Đơn giá<br>(VND)</th>
+            <th style="width: 4%;">SL</th>
+            <th style="width: 8%;">Số tháng</th>
+            <th style="width: 5%;">CK</th>
+            <th style="width: 10%;">Thành tiền<br>(VND)</th>
+          </tr>
+        `;
+      } else {
+        theadHtml = `
+          <tr>
+            <th style="width: 4%;" class="stt">STT</th>
+            <th style="width: 21%;">Tên gói / Hạng mục</th>
+            <th style="width: 30%;">Cấu hình / Mô tả dịch vụ</th>
+            <th style="width: 10%;">Đơn vị tính</th>
+            <th style="width: 12%;">Đơn giá<br>(VND)</th>
+            <th style="width: 4%;">SL</th>
+            <th style="width: 9%;">Số tháng</th>
+            <th style="width: 10%;">Thành tiền<br>(VND)</th>
+          </tr>
+        `;
+      }
+      previewTable.querySelector('thead').innerHTML = theadHtml;
+
+      const tbody = document.getElementById('preview-table-body');
+      tbody.innerHTML = '';
+
+      if (items.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="${totalCols}" class="center" style="padding: 20px; color: #888;">Chưa có máy chủ ảo nào trong danh sách. Vui lòng nhấn nút "Thêm VPS mới" để bắt đầu.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      // Group Header Row
+      const groupHeader = document.createElement('tr');
+      groupHeader.innerHTML = `
+        <td class="stt">1</td>
+        <td colspan="${colSpanCount}"><strong>Nhóm dịch vụ:</strong> Cloud VPS (Cấu hình tùy chỉnh)</td>
+      `;
+      tbody.appendChild(groupHeader);
+
+      let totalBeforeVat = 0;
+
+      items.forEach((item, index) => {
+        // Calculate original unit price in USD
+        const itemUsd = (item.cpu * rateCpu) +
+          (item.ram * rateRam) +
+          (item.ssd * rateSsd) +
+          (item.hdd * rateHdd) +
+          ((item.ip_addon || 0) * rateIp);
+
+        // Convert to VND
+        const itemVndBase = itemUsd * rate;
+
+        // Apply discount and calculate total for this row
+        const rowTotalBeforeDiscount = itemVndBase * item.sl * item.month;
+        const rowTotalAfterDiscount = rowTotalBeforeDiscount * (1 - (item.discount / 100));
+
+        totalBeforeVat += rowTotalAfterDiscount;
+
+        // Build config description string
+        let configStr = `${item.cpu} vCPU / ${item.ram} GB RAM / ${item.ssd} GB SSD`;
+        if (item.hdd > 0) {
+          configStr += ` + ${item.hdd} GB HDD`;
+        }
+        if (item.ip_addon > 0) {
+          configStr += ` + ${item.ip_addon} IP Add-on`;
+        }
+
+        // Build name cell
+        let nameHtml = `<strong>${item.name || 'VPS'}</strong>`;
+
+        const row = document.createElement('tr');
+        if (showDiscount) {
+          row.innerHTML = `
+            <td class="stt">1.${index + 1}</td>
+            <td>${nameHtml}</td>
+            <td>${configStr}</td>
+            <td class="center">Máy chủ/tháng</td>
+            <td class="num">${fmt(itemVndBase)}</td>
+            <td class="center">${item.sl}</td>
+            <td class="center">${item.month}</td>
+            <td class="center">${item.discount}%</td>
+            <td class="num">${fmt(rowTotalAfterDiscount)}</td>
+          `;
+        } else {
+          row.innerHTML = `
+            <td class="stt">1.${index + 1}</td>
+            <td>${nameHtml}</td>
+            <td>${configStr}</td>
+            <td class="center">Máy chủ/tháng</td>
+            <td class="num">${fmt(itemVndBase * (1 - (item.discount / 100)))}</td>
+            <td class="center">${item.sl}</td>
+            <td class="center">${item.month}</td>
+            <td class="num">${fmt(rowTotalAfterDiscount)}</td>
+          `;
+        }
+        tbody.appendChild(row);
+      });
+
+      // Summary lines
+      const vatOption = document.getElementById('vat-option').value;
+
+      if (vatOption === 'yes') {
+        const vat = totalBeforeVat * 0.1;
+        const totalWithVat = totalBeforeVat * 1.1;
+
+        const r1 = document.createElement('tr');
+        r1.className = 'summary-row';
+        r1.innerHTML = `
+          <td colspan="${colSpanCount}" class="num">Tổng tiền dịch vụ (Chưa VAT)</td>
+          <td class="num">${fmt(totalBeforeVat)}</td>
+        `;
+        tbody.appendChild(r1);
+
+        const r2 = document.createElement('tr');
+        r2.className = 'summary-row';
+        r2.innerHTML = `
+          <td colspan="${colSpanCount}" class="num">Thuế VAT 10%</td>
+          <td class="num">${fmt(vat)}</td>
+        `;
+        tbody.appendChild(r2);
+
+        const r3 = document.createElement('tr');
+        r3.className = 'summary-row';
+        r3.innerHTML = `
+          <td colspan="${colSpanCount}" class="num">Tổng cộng tiền thanh toán (Gồm VAT)</td>
+          <td class="num">${fmt(totalWithVat)}</td>
+        `;
+        tbody.appendChild(r3);
+      } else {
+        const r1 = document.createElement('tr');
+        r1.className = 'summary-row';
+        r1.innerHTML = `
+          <td colspan="${colSpanCount}" class="num">Tổng cộng tiền thanh toán (Chưa VAT)</td>
+          <td class="num">${fmt(totalBeforeVat)}</td>
+        `;
+        tbody.appendChild(r1);
+      }
+    }
+
+    // Share Modal Functionality
+    let sharedQuoteUrl = "";
+
+    function showShareModal(url) {
+      sharedQuoteUrl = url;
+      document.getElementById('share-url-field').value = url;
+
+      // Reset button copy state
+      const btnCopy = document.getElementById('btn-copy-link');
+      btnCopy.className = "btn-share-act btn-share-copy";
+      document.getElementById('text-copy-link').innerText = "Sao chép liên kết";
+
+      const modal = document.getElementById('share-modal');
+      modal.style.display = 'flex';
+      setTimeout(() => {
+        modal.classList.add('active');
+      }, 10);
+    }
+
+    function closeShareModal() {
+      const modal = document.getElementById('share-modal');
+      modal.classList.remove('active');
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 300);
+    }
+
+    function copySharedLink() {
+      const input = document.getElementById('share-url-field');
+      input.select();
+      document.execCommand('copy');
+
+      const btnCopy = document.getElementById('btn-copy-link');
+      btnCopy.className = "btn-share-act btn-share-copy copied";
+      document.getElementById('text-copy-link').innerText = "Đã sao chép!";
+    }
+
+    function openSharedLink() {
+      if (sharedQuoteUrl) {
+        window.open(sharedQuoteUrl, '_blank');
+      }
+    }
+
+    // Launch!
+    window.onload = init;
+  </script>
+
+  <!-- Modal Thông báo chia sẻ thành công -->
+  <div id="share-modal" class="share-modal-overlay" style="display: none;">
+    <div class="share-modal-content">
+      <div class="share-icon-success">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <h3 class="share-modal-title">Chia Sẻ Báo Giá Thành Công</h3>
+      <p class="share-modal-desc">Đường dẫn xem trực tuyến đã được tạo trên máy chủ.</p>
+
+      <div class="share-url-container">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          style="color:var(--ui-text-muted);">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </svg>
+        <input type="text" id="share-url-field" class="share-url-input" readonly value="" onclick="this.select();" />
+      </div>
+
+      <div class="share-modal-actions">
+        <button id="btn-copy-link" class="btn-share-act btn-share-copy" onclick="copySharedLink()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span id="text-copy-link">Sao chép liên kết</span>
+        </button>
+        <button class="btn-share-act btn-share-open" onclick="openSharedLink()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+          Mở link
+        </button>
+        <button class="btn-share-act btn-share-close" onclick="closeShareModal()">Đóng</button>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

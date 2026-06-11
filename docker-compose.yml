@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  quote-builder:
+    build: .
+    container_name: quote-builder-app
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+    restart: always

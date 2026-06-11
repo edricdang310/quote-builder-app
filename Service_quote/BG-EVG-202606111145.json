@@ -1,0 +1,29 @@
+{
+  "quote_number": "BG-EVG-202606111145",
+  "quote_date": "11/06/2026",
+  "client_name": "Quý Khách Hàng",
+  "client_address": "Hà Nội",
+  "vat_option": "yes",
+  "discount_option": "yes",
+  "rate_usd": 26500,
+  "price_cpu": 3,
+  "price_ram": 3.5,
+  "price_ssd": 0.1,
+  "price_hdd": 0.06,
+  "price_ip": 3,
+  "items": [
+    {
+      "name": "VPS 1",
+      "group": "Layer Proxy",
+      "os": "Ubuntu",
+      "cpu": 8,
+      "ram": 32,
+      "ssd": 100,
+      "hdd": 0,
+      "ip_addon": 0,
+      "sl": 1,
+      "month": 1,
+      "discount": 20
+    }
+  ]
+}
