@@ -10,6 +10,10 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
 
+    def address_string(self):
+        # Prevent slow DNS lookups when logging requests
+        return self.client_address[0]
+
     def do_GET(self):
         # Decode and clean path to handle URL-encoded characters and query parameters
         path_clean = urllib.parse.unquote(self.path).split('?')[0]

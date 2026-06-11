@@ -499,6 +499,158 @@
       background: #dc2626;
       box-shadow: 0 4px 16px rgba(239, 68, 68, 0.35);
     }
+
+    /* Mobile Responsive Layout overrides */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px 12px;
+        gap: 20px;
+      }
+
+      .header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .header-title-box {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+      }
+
+      .header-logo {
+        height: 40px;
+      }
+
+      .btn-back {
+        justify-content: center;
+        width: 100%;
+        padding: 12px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .stat-card {
+        padding: 15px;
+        gap: 15px;
+      }
+
+      .control-panel {
+        padding: 12px;
+      }
+
+      .search-wrapper {
+        padding: 4px 10px;
+      }
+
+      .search-input {
+        font-size: 13px;
+        padding: 8px 0;
+      }
+
+      /* Responsive Card-like Table Layout for Mobile */
+      .table-container {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        overflow: visible;
+      }
+
+      .quotes-table thead {
+        display: none;
+      }
+
+      .quotes-table, 
+      .quotes-table tbody, 
+      .quotes-table tr, 
+      .quotes-table td {
+        display: block;
+        width: 100%;
+      }
+
+      .quotes-table tr {
+        background: var(--ui-card);
+        border: 1px solid var(--ui-border);
+        border-radius: 12px;
+        margin-bottom: 16px;
+        padding: 16px;
+        position: relative;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        box-sizing: border-box;
+      }
+
+      .quotes-table tr:hover {
+        background-color: rgba(255, 255, 255, 0.04);
+      }
+
+      .quotes-table td {
+        padding: 6px 0;
+        border-bottom: none;
+        font-size: 13px;
+        text-align: left !important;
+      }
+
+      /* Hide STT column */
+      .quotes-table td:first-child {
+        display: none;
+      }
+
+      /* Filename title column styling */
+      .quotes-table td.col-filename {
+        font-size: 15px;
+        font-weight: 700;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        margin-bottom: 8px;
+      }
+
+      .filename-wrapper {
+        width: 100%;
+        gap: 8px;
+      }
+
+      /* Add labels for dates and sizes */
+      .quotes-table td:nth-child(3)::before {
+        content: "Thời gian chia sẻ: ";
+        color: var(--ui-text-muted);
+        font-weight: 500;
+      }
+
+      .quotes-table td:nth-child(4)::before {
+        content: "Dung lượng: ";
+        color: var(--ui-text-muted);
+        font-weight: 500;
+      }
+
+      /* Actions container cell */
+      .quotes-table td.actions-cell {
+        padding-top: 14px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        margin-top: 8px;
+      }
+
+      .actions-wrapper {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .actions-wrapper .btn-action {
+        flex: 1;
+        min-width: 80px;
+        justify-content: center;
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+    }
   </style>
 </head>
 

@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đang tải báo giá...</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --brand: #d89b00;
@@ -13,6 +16,15 @@
       --bg: #ffffff;
       --soft-row: #fff8e8;
       --hint: #f7f7f7;
+
+      /* Premium Dashboard UI Colors */
+      --ui-bg: #090d16;
+      --ui-card: #1e293b;
+      --ui-border: rgba(255, 255, 255, 0.08);
+      --ui-text: #f8fafc;
+      --ui-text-muted: #94a3b8;
+      --ui-accent: #f59e0b;
+      --ui-accent-hover: #d97706;
     }
 
     * {
@@ -20,25 +32,138 @@
     }
 
     body {
-      font-family: Arial, Helvetica, sans-serif;
-      line-height: 1.32;
-      font-size: 12px;
-      padding: 20px;
-      background: #f3f4f6;
-      color: #111;
-      display: flex;
-      justify-content: center;
+      font-family: 'Inter', sans-serif;
       margin: 0;
+      padding: 0;
+      background: var(--ui-bg);
+      color: var(--ui-text);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
     }
 
+    /* Floating Print Button */
+    .btn-print {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #f59e0b;
+      color: #0f172a;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      transition: all 0.2s;
+      z-index: 9999;
+    }
+
+    .btn-print:hover {
+      background: #d97706;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-print svg {
+      stroke: currentColor;
+    }
+
+    /* Main Content Area */
+    .viewer-content {
+      flex: 1;
+      overflow: auto;
+      padding: 30px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Loading Spinner */
+    .spinner-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 60px;
+      color: var(--ui-text-muted);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top-color: var(--ui-accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Error Box */
+    .error-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 12px;
+      color: #fca5a5;
+      max-width: 450px;
+      margin: 40px auto;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(8px);
+    }
+
+    .error-container h3 {
+      margin: 0 0 10px 0;
+      color: #ef4444;
+      font-weight: 600;
+    }
+
+    .error-container p {
+      font-size: 13px;
+      margin: 0 0 20px 0;
+      line-height: 1.5;
+    }
+
+    /* Sheet Container for centering A4 and scaling */
+    .sheet-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    /* A4 Page Styling */
     .page {
       width: 210mm;
       min-height: 297mm;
       background: var(--bg);
+      color: #111;
       padding: 10mm 10mm 9mm;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-      border-radius: 4px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
       position: relative;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.32;
+      font-size: 12px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      transform-origin: top center;
     }
 
     .company-header {
@@ -60,6 +185,7 @@
       font-size: 17px;
       line-height: 1.18;
       text-transform: uppercase;
+      color: #111;
       font-weight: bold;
     }
 
@@ -92,6 +218,7 @@
       font-size: 21px;
       text-transform: uppercase;
       letter-spacing: .2px;
+      color: #000;
       font-weight: bold;
     }
 
@@ -145,6 +272,7 @@
       color: #333;
     }
 
+    /* Table on A4 */
     .preview-table {
       width: 100%;
       border-collapse: collapse;
@@ -240,65 +368,27 @@
       color: var(--muted);
     }
 
-    .btn-print {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: #f59e0b;
-      color: #0f172a;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 50px;
-      font-weight: 600;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      transition: all 0.2s;
-      z-index: 9999;
-    }
-
-    .btn-print:hover {
-      background: #d97706;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-    }
-
-    .btn-print svg {
-      stroke: currentColor;
-    }
-
-    .error-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px;
-      background: #fee2e2;
-      border: 1px solid #fca5a5;
-      border-radius: 8px;
-      color: #991b1b;
-      max-width: 500px;
-      margin: 40px auto;
-      text-align: center;
-    }
-
-    @page {
-      size: A4;
-      margin: 0;
-    }
-
+    /* Print styles overrides */
     @media print {
       .btn-print {
         display: none !important;
       }
       body {
+        background: #fff !important;
+        padding: 0 !important;
+        margin: 0 !important;
         display: block !important;
-        background: #fff;
-        padding: 0;
-        margin: 0;
+        overflow: visible !important;
+        height: auto !important;
+      }
+      .viewer-content {
+        padding: 0 !important;
+        overflow: visible !important;
+        display: block !important;
+      }
+      .sheet-container {
+        display: block !important;
+        padding: 0 !important;
       }
       .page {
         box-shadow: none !important;
@@ -306,130 +396,132 @@
         padding: 12mm 12mm 10mm !important;
         width: 210mm !important;
         height: 297mm !important;
+        transform: none !important;
         page-break-after: avoid;
         page-break-inside: avoid;
+        margin-bottom: 0 !important;
       }
     }
   </style>
 </head>
 <body>
-  <div id="loading-spinner" style="text-align: center; padding: 50px; font-size: 16px; color: #666;">
-    Đang tải dữ liệu báo giá...
-  </div>
+  <!-- Header Bar/Toolbar Removed -->
 
-  <div id="error-box" style="display: none;" class="error-container">
-    <h3 style="margin-top: 0;">Không thể tải báo giá</h3>
-    <p id="error-message">Đường dẫn không hợp lệ hoặc tệp cấu hình không tồn tại trên máy chủ.</p>
-    <button onclick="window.location.href='/price/history.html'" style="padding: 8px 16px; background: #dc2626; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Xem Lịch sử</button>
-  </div>
-
-  <div class="page" id="print-page" style="display: none;">
-    <!-- Company Header -->
-    <div class="company-header">
-      <div class="company-info">
-        <h2>CÔNG TY CỔ PHẦN EVEREST TOÀN CẦU</h2>
-        <p><strong>Add:</strong> Số 117, ngõ 233, Đ Chiến Thắng, P.Hà Đông, Việt Nam</p>
-        <p><strong>VPGD:</strong> B2 Roman Plaza, Đường Tố Hữu, P.Đại Mỗ, Hà Nội</p>
-        <p><strong>Tel:</strong> 0985386150 - 0888425385</p>
-        <p><strong>Email:</strong> contact@evgcorp.net</p>
-        <p><strong>MST:</strong> 0108836791</p>
-      </div>
-      <div class="logo-box">
-        <img src="../Images/logo-evg.png" alt="EVG logo" />
-      </div>
+  <!-- Main Content Area -->
+  <div class="viewer-content" id="viewer-content-area">
+    <div id="loading-spinner" class="spinner-container">
+      <div class="spinner"></div>
+      <div>Đang tải dữ liệu báo giá...</div>
     </div>
 
-    <!-- Title -->
-    <div class="title">
-      <h1>BÁO GIÁ DỊCH VỤ VPS</h1>
+    <div id="error-box" style="display: none;" class="error-container">
+      <h3 style="margin-top: 0;">Không thể tải báo giá</h3>
+      <p id="error-message">Đường dẫn không hợp lệ hoặc tệp cấu hình không tồn tại trên máy chủ.</p>
+      <button onclick="window.location.href='/price/builder.html'" style="padding: 10px 20px; background: linear-gradient(135deg, var(--ui-accent) 0%, #d97706 100%); color: #0f172a; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: inherit; font-size: 13px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2); transition: all 0.2s;">Về trang tạo báo giá</button>
     </div>
 
-    <!-- Two Cards Info -->
-    <div class="two-col">
-      <div class="card">
-        <h3>Thông tin khách hàng</h3>
-        <div class="info-grid">
-          <div class="label">Tên khách hàng</div>
-          <div class="val-text" id="lbl-client-name">Quý Khách Hàng</div>
-          <div class="label">Điện thoại</div>
-          <div class="val-text"></div>
-          <div class="label">Email</div>
-          <div class="val-text"></div>
-          <div class="label">Địa chỉ</div>
-          <div class="val-text" id="lbl-client-address"></div>
+    <!-- Sheet Container for centering A4 and scaling -->
+    <div class="sheet-container" id="sheet-container" style="display: none;">
+      <div class="page" id="print-page">
+        <!-- Company Header -->
+        <div class="company-header">
+          <div class="company-info">
+            <h2>CÔNG TY CỔ PHẦN EVEREST TOÀN CẦU</h2>
+            <p><strong>Add:</strong> Số 117, ngõ 233, Đ Chiến Thắng, P.Hà Đông, Việt Nam</p>
+            <p><strong>VPGD:</strong> B2 Roman Plaza, Đường Tố Hữu, P.Đại Mỗ, Hà Nội</p>
+            <p><strong>Tel:</strong> 0985386150 - 0888425385</p>
+            <p><strong>Email:</strong> contact@evgcorp.net</p>
+            <p><strong>MST:</strong> 0108836791</p>
+          </div>
+          <div class="logo-box">
+            <img src="../Images/logo-evg.png" alt="EVG logo" />
+          </div>
+        </div>
+
+        <!-- Title -->
+        <div class="title">
+          <h1>BÁO GIÁ DỊCH VỤ VPS</h1>
+        </div>
+
+        <!-- Two Cards Info -->
+        <div class="two-col">
+          <div class="card">
+            <h3>Thông tin khách hàng</h3>
+            <div class="info-grid">
+              <div class="label">Tên khách hàng</div>
+              <div class="val-text" id="lbl-client-name">Quý Khách Hàng</div>
+              <div class="label">Điện thoại</div>
+              <div class="val-text"></div>
+              <div class="label">Email</div>
+              <div class="val-text"></div>
+              <div class="label">Địa chỉ</div>
+              <div class="val-text" id="lbl-client-address"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Thông tin báo giá</h3>
+            <div class="info-grid">
+              <div class="label">Số báo giá</div>
+              <div class="val-text" id="lbl-quote-number">BG-EVG</div>
+              <div class="label">Ngày báo giá</div>
+              <div class="val-text" id="lbl-quote-date">--/--/----</div>
+              <div class="label">Phụ trách KD</div>
+              <div class="val-text"></div>
+              <div class="label">Điện thoại</div>
+              <div class="val-text"></div>
+              <div class="label">Email</div>
+              <div class="val-text"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Note box -->
+        <div class="note-box">
+          Công ty cổ phần Everest Toàn Cầu (EVG) xin gửi đến quý khách hàng bản báo giá dịch vụ/hạ tầng máy chủ ảo Cloud
+          VPS, chi tiết báo giá như sau:
+        </div>
+
+        <!-- Services Table -->
+        <table class="preview-table">
+          <thead>
+            <!-- Filled dynamically -->
+          </thead>
+          <tbody id="preview-table-body">
+            <!-- Filled dynamically -->
+          </tbody>
+        </table>
+
+        <!-- Terms -->
+        <div class="terms">
+          <h3>Điều khoản thương mại</h3>
+          <ol>
+            <li>Hiệu lực của báo giá: 07 ngày</li>
+            <li>Hỗ trợ tích hợp, xử lý sự cố 24/7</li>
+            <li>Thanh toán: Chuyển khoản VND</li>
+            <li>Thông tin chuyển khoản thanh toán:<br>
+              <strong>STK CTY:</strong> CÔNG TY CỔ PHẦN EVEREST TOÀN CẦU<br>
+              <strong>STK:</strong> 1111125038586 - Ngân hàng Quân Đội - Chi nhánh Trần Duy Hưng
+            </li>
+          </ol>
+        </div>
+
+        <!-- Signatures -->
+        <div class="footer">
+          <div class="sign">
+            <strong>ĐẠI DIỆN ĐƠN VỊ BÁO GIÁ</strong>
+            <div class="spacer"></div>
+            <div class="muted">(Ký, ghi rõ họ tên)</div>
+          </div>
+          <div class="sign">
+            <strong>KHÁCH HÀNG</strong>
+            <div class="spacer"></div>
+            <div class="muted">(Ký, ghi rõ họ tên)</div>
+          </div>
         </div>
       </div>
-
-      <div class="card">
-        <h3>Thông tin báo giá</h3>
-        <div class="info-grid">
-          <div class="label">Số báo giá</div>
-          <div class="val-text" id="lbl-quote-number">BG-EVG</div>
-          <div class="label">Ngày báo giá</div>
-          <div class="val-text" id="lbl-quote-date">--/--/----</div>
-          <div class="label">Phụ trách KD</div>
-          <div class="val-text"></div>
-          <div class="label">Điện thoại</div>
-          <div class="val-text"></div>
-          <div class="label">Email</div>
-          <div class="val-text"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Note box -->
-    <div class="note-box">
-      Công ty cổ phần Everest Toàn Cầu (EVG) xin gửi đến quý khách hàng bản báo giá dịch vụ/hạ tầng máy chủ ảo Cloud
-      VPS, chi tiết báo giá như sau:
-    </div>
-
-    <!-- Services Table -->
-    <table class="preview-table">
-      <thead>
-        <!-- Filled dynamically -->
-      </thead>
-      <tbody id="preview-table-body">
-        <!-- Filled dynamically -->
-      </tbody>
-    </table>
-
-    <!-- Terms -->
-    <div class="terms">
-      <h3>Điều khoản thương mại</h3>
-      <ol>
-        <li>Hiệu lực của báo giá: 07 ngày</li>
-        <li>Hỗ trợ tích hợp, xử lý sự cố 24/7</li>
-        <li>Thanh toán: Chuyển khoản VND</li>
-        <li>Thông tin chuyển khoản thanh toán:<br>
-          <strong>STK CTY:</strong> CÔNG TY CỔ PHẦN EVEREST TOÀN CẦU<br>
-          <strong>STK:</strong> 1111125038586 - Ngân hàng Quân Đội - Chi nhánh Trần Duy Hưng
-        </li>
-      </ol>
-    </div>
-
-    <!-- Signatures -->
-    <div class="footer">
-      <div class="sign">
-        <strong>ĐẠI DIỆN ĐƠN VỊ BÁO GIÁ</strong>
-        <div class="spacer"></div>
-        <div class="muted">(Ký, ghi rõ họ tên)</div>
-      </div>
-      <div class="sign">
-        <strong>KHÁCH HÀNG</strong>
-        <div class="spacer"></div>
-        <div class="muted">(Ký, ghi rõ họ tên)</div>
-      </div>
     </div>
   </div>
-
-  <button class="btn-print" id="btn-print-pdf" onclick="window.print()" style="display: none;">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-      <polyline points="6 9 6 2 18 2 18 9"></polyline>
-      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-      <rect x="6" y="14" width="12" height="8"></rect>
-    </svg>
-    Xuất file PDF
-  </button>
 
   <script>
     function fmt(val) {
@@ -457,6 +549,8 @@
         })
         .then(data => {
           renderQuote(data);
+          // Run scale adjustment once the element is rendered and displayed
+          setTimeout(adjustScale, 50);
         })
         .catch(err => {
           showError(err.message);
@@ -469,6 +563,26 @@
       document.getElementById('error-box').style.display = 'block';
     }
 
+    function adjustScale() {
+      const container = document.getElementById('viewer-content-area');
+      const page = document.getElementById('print-page');
+      if (!container || !page || page.style.display === 'none') return;
+      
+      const containerWidth = container.clientWidth - 32; // 16px padding on each side
+      const pageWidth = 794; // approx 210mm in px
+      
+      if (containerWidth < pageWidth) {
+        const scale = containerWidth / pageWidth;
+        page.style.transform = `scale(${scale})`;
+        page.style.marginBottom = `-${page.offsetHeight * (1 - scale)}px`;
+      } else {
+        page.style.transform = 'none';
+        page.style.marginBottom = '0';
+      }
+    }
+
+    window.addEventListener('resize', adjustScale);
+
     function renderQuote(data) {
       // Set Document Title
       document.title = data.quote_number || 'BG-EVG';
@@ -478,6 +592,8 @@
       document.getElementById('lbl-quote-date').innerText = data.quote_date || '--/--/----';
       document.getElementById('lbl-client-name').innerText = data.client_name || 'Quý Khách Hàng';
       document.getElementById('lbl-client-address').innerText = data.client_address !== undefined ? data.client_address : '';
+      
+
 
       // Config values
       const rate = parseFloat(data.rate_usd) || 26500;
@@ -644,11 +760,20 @@
         }
       }
 
-      // Hide loading and show page
+      // Hide loading and show page & print button
       document.getElementById('loading-spinner').style.display = 'none';
-      document.getElementById('print-page').style.display = 'block';
       document.getElementById('btn-print-pdf').style.display = 'flex';
+      document.getElementById('sheet-container').style.display = 'flex';
     }
   </script>
+
+  <button class="btn-print" id="btn-print-pdf" onclick="window.print()" style="display: none;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <polyline points="6 9 6 2 18 2 18 9"></polyline>
+      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+      <rect x="6" y="14" width="12" height="8"></rect>
+    </svg>
+    Xuất file PDF
+  </button>
 </body>
 </html>
