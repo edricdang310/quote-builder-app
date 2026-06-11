@@ -115,8 +115,10 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 with open(file_path, 'w', encoding='utf-8') as f:
                     json.dump(quote_data, f, ensure_ascii=False, indent=2)
                 
-                # Return the URL
-                share_url = f"http://localhost:{PORT}/Service_quote/{safe_filename}.html"
+                # Return the URL dynamically based on the request Host header
+                host = self.headers.get('Host', f'localhost:{PORT}')
+                proto = self.headers.get('X-Forwarded-Proto', 'http')
+                share_url = f"{proto}://{host}/Service_quote/{safe_filename}.html"
                 
                 self.send_response(200)
                 self.send_header('Content-type', 'application/json')
