@@ -2,16 +2,625 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=/price/builder.html">
-  <title>EVG Quote Builder - Redirecting...</title>
-  <script>
-    window.location.replace("/price/builder.html");
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EVG Quote Portal - Everest Global</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --ui-bg: #090d16;
+      --ui-card: rgba(30, 41, 59, 0.7);
+      --ui-border: rgba(255, 255, 255, 0.08);
+      --ui-text: #f8fafc;
+      --ui-text-muted: #94a3b8;
+      --ui-accent: #d89b00;
+      --ui-accent-hover: #b07e00;
+      --ui-accent-glow: rgba(216, 155, 0, 0.4);
+      --ui-card-glow: rgba(255, 255, 255, 0.02);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', 'Inter', sans-serif;
+      background-color: var(--ui-bg);
+      color: var(--ui-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Glow Background Orbs */
+    .glow-orb {
+      position: absolute;
+      width: 450px;
+      height: 450px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--ui-accent-glow) 0%, rgba(216, 155, 0, 0) 70%);
+      filter: blur(60px);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .orb-1 {
+      top: -100px;
+      left: -100px;
+    }
+    .orb-2 {
+      bottom: -150px;
+      right: -100px;
+    }
+
+    /* Outer Wrapper */
+    .wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px;
+      width: 100%;
+      z-index: 1;
+      position: relative;
+    }
+
+    /* Brand Header */
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+      animation: fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .brand-logo-container {
+      background: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      display: inline-block;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25), 0 0 15px rgba(255, 255, 255, 0.1);
+      margin-bottom: 20px;
+      transition: transform 0.3s ease;
+    }
+    .brand-logo-container:hover {
+      transform: scale(1.03);
+    }
+    .brand-logo {
+      max-height: 50px;
+      display: block;
+    }
+
+    .brand-title {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 4px;
+      color: var(--ui-accent);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .portal-heading {
+      font-size: 32px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffffff 60%, #e2e8f0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    /* Main Grid */
+    .portal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 40px;
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+    }
+
+    @media (max-width: 768px) {
+      .portal-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+    }
+
+    /* Card styling - Glassmorphism */
+    .portal-card {
+      background: var(--ui-card);
+      border: 1px solid var(--ui-border);
+      border-radius: 20px;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .portal-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at top right, rgba(216, 155, 0, 0.05), transparent 70%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .portal-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(216, 155, 0, 0.3);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(216, 155, 0, 0.05);
+    }
+
+    .portal-card:hover::before {
+      opacity: 1;
+    }
+
+    /* Card Contents */
+    .card-icon {
+      font-size: 44px;
+      margin-bottom: 24px;
+      width: 70px;
+      height: 70px;
+      background: rgba(216, 155, 0, 0.1);
+      border: 1px solid rgba(216, 155, 0, 0.15);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ui-accent);
+      transition: transform 0.3s ease;
+    }
+
+    .portal-card:hover .card-icon {
+      transform: scale(1.1) rotate(3deg);
+      background: rgba(216, 155, 0, 0.15);
+    }
+
+    .card-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .card-desc {
+      font-size: 15px;
+      color: var(--ui-text-muted);
+      line-height: 1.6;
+      margin-bottom: 30px;
+      flex-grow: 1;
+    }
+
+    .card-desc ul {
+      list-style: none;
+      margin-top: 12px;
+    }
+
+    .card-desc li {
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 8px;
+    }
+
+    .card-desc li::before {
+      content: '✦';
+      position: absolute;
+      left: 0;
+      color: var(--ui-accent);
+    }
+
+    /* Card Badge / Stats */
+    .card-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 13px;
+      color: var(--ui-text-muted);
+      margin-bottom: 24px;
+      align-self: flex-start;
+    }
+    
+    .card-badge span.pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      display: inline-block;
+      animation: pulse 1.8s infinite;
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      padding: 16px 24px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--ui-accent);
+      color: #000;
+      border: none;
+      box-shadow: 0 4px 14px var(--ui-accent-glow);
+    }
+
+    .btn-primary:hover {
+      background: var(--ui-accent-hover);
+      box-shadow: 0 6px 20px rgba(216, 155, 0, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.04);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Guide Section Trigger */
+    .guide-trigger-container {
+      text-align: center;
+      margin-top: 10px;
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+    }
+
+    .btn-text {
+      background: none;
+      border: none;
+      color: var(--ui-text-muted);
+      cursor: pointer;
+      font-size: 15px;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    .btn-text:hover {
+      color: var(--ui-accent);
+      background: rgba(216, 155, 0, 0.05);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--ui-border);
+      padding: 30px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--ui-text-muted);
+      background: rgba(9, 13, 22, 0.8);
+      z-index: 1;
+    }
+
+    footer p {
+      margin-bottom: 6px;
+    }
+
+    /* Modal Styling for Guide */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(9, 13, 22, 0.85);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 20px;
+    }
+
+    .modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: #0f172a;
+      border: 1px solid var(--ui-border);
+      border-radius: 20px;
+      max-width: 800px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 40px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      transform: scale(0.95);
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+
+    .modal.active .modal-content {
+      transform: scale(1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--ui-text-muted);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .modal h2 {
+      font-size: 26px;
+      margin-bottom: 24px;
+      color: #fff;
+      border-bottom: 1px solid var(--ui-border);
+      padding-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .guide-section {
+      margin-bottom: 24px;
+    }
+
+    .guide-section h3 {
+      font-size: 17px;
+      color: var(--ui-accent);
+      margin-bottom: 10px;
+    }
+
+    .guide-section p, .guide-section li {
+      font-size: 14px;
+      color: var(--ui-text-muted);
+      line-height: 1.6;
+    }
+
+    .guide-section ol, .guide-section ul {
+      padding-left: 20px;
+      margin-top: 6px;
+    }
+
+    .guide-section li {
+      margin-bottom: 6px;
+    }
+
+    /* Keyframes */
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
-  <div style="font-family: sans-serif; text-align: center; margin-top: 100px;">
-    <h2>Đang chuyển hướng đến Công cụ tạo báo giá VPS EVG...</h2>
-    <p>Nếu trình duyệt không tự chuyển hướng, hãy click vào <a href="/price/builder.html">liên kết này</a>.</p>
+
+  <!-- Glow effects -->
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+
+  <!-- Wrapper -->
+  <div class="wrapper">
+    <!-- Header -->
+    <header>
+      <div class="brand-logo-container">
+        <img class="brand-logo" src="Images/logo-evg.png" alt="EVG Logo">
+      </div>
+      <div class="brand-title">Everest Global Joint Stock Company</div>
+      <h1 class="portal-heading">Hệ Thống Quản Lý Báo Giá VPS</h1>
+    </header>
+
+    <!-- Main Content Grid -->
+    <div class="portal-grid">
+      <!-- Card 1: Create Quote -->
+      <div class="portal-card">
+        <div>
+          <div class="card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="12" y1="18" x2="12" y2="12"></line>
+              <line x1="9" y1="15" x2="15" y2="15"></line>
+            </svg>
+          </div>
+          <h2 class="card-title">Tạo Báo Giá Mới</h2>
+          <div class="card-desc">
+            <p>Thiết lập và thiết kế báo giá chi tiết cho khách hàng cấu hình Cloud VPS của EVG:</p>
+            <ul>
+              <li>Nhập thông tin khách hàng, số báo giá tự động.</li>
+              <li>Tùy chỉnh cấu hình phần cứng (vCPU, RAM, SSD, HDD, IP).</li>
+              <li>Áp dụng chiết khấu riêng biệt và thuế VAT 10%.</li>
+              <li>Xuất bản in A4 PDF hoặc Chia sẻ liên kết trực tuyến.</li>
+            </ul>
+          </div>
+        </div>
+        <a href="price/builder.html" class="btn btn-primary">
+          Bắt Đầu Soạn Thảo
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left: 2px;">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Card 2: History -->
+      <div class="portal-card">
+        <div>
+          <div class="card-badge">
+            <span class="pulse"></span>
+            <span id="active-quotes-count">Loading stats...</span>
+          </div>
+          <h2 class="card-title">Lịch Sử & Lưu Trữ</h2>
+          <div class="card-desc">
+            <p>Quản lý toàn bộ cơ sở dữ liệu các bản báo giá trực tuyến đã được chia sẻ và khởi tạo:</p>
+            <ul>
+              <li>Xem danh sách báo giá sắp xếp theo thời gian mới nhất.</li>
+              <li>Tìm kiếm nhanh theo tên khách hàng hoặc mã số báo giá.</li>
+              <li>Chỉnh sửa trực tiếp dữ liệu cũ để cập nhật thay đổi.</li>
+              <li>Xóa vĩnh viễn dữ liệu báo giá khỏi máy chủ một cách an toàn.</li>
+            </ul>
+          </div>
+        </div>
+        <a href="price/history.html" class="btn btn-secondary">
+          Xem Lịch Sử Lưu Trữ
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Quick Help Trigger -->
+    <div class="guide-trigger-container">
+      <button class="btn-text" onclick="toggleModal(true)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        Hướng dẫn sử dụng nhanh hệ thống
+      </button>
+    </div>
   </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 CÔNG TY CỔ PHẦN EVEREST TOÀN CẦU (EVG)</p>
+    <p style="opacity: 0.6; font-size: 11px;">Địa chỉ VPGD: B2 Roman Plaza, Tố Hữu, Đại Mỗ, Nam Từ Liêm, Hà Nội</p>
+  </footer>
+
+  <!-- User Guide Modal -->
+  <div class="modal" id="guide-modal" onclick="if(event.target === this) toggleModal(false)">
+    <div class="modal-content">
+      <button class="modal-close" onclick="toggleModal(false)">✕</button>
+      <h2>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--ui-accent)" stroke-width="2.5">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+        </svg>
+        Hướng Dẫn Vận Hành Hệ Thống
+      </h2>
+      
+      <div class="guide-section">
+        <h3>1. Khởi chạy & Thiết lập</h3>
+        <p>Ứng dụng chạy trên cổng mạng mặc định <strong>8080</strong>. Bạn có thể vận hành cục bộ bằng Python hoặc triển khai thông qua Docker container:</p>
+        <ul>
+          <li><strong>Local Python:</strong> Chạy lệnh <code>python server.py</code>.</li>
+          <li><strong>Docker:</strong> Chạy lệnh <code>docker compose up --build -d</code> để khởi động chạy ngầm.</li>
+        </ul>
+      </div>
+
+      <div class="guide-section">
+        <h3>2. Cơ chế Lưu trữ & Chia sẻ</h3>
+        <p>Khi bạn nhấn nút <strong>"Chia sẻ"</strong> hoặc <strong>"In/Xuất PDF"</strong>, toàn bộ cấu hình thô được lưu trữ dưới định dạng JSON siêu nhẹ trên ổ đĩa cứng của máy chủ (trong thư mục <code>Service_quote/</code>). Khi khách hàng xem link chia sẻ, hệ thống sẽ sử dụng lõi kết xuất động để dựng giao diện đẹp mắt trong thời gian thực.</p>
+      </div>
+
+      <div class="guide-section">
+        <h3>3. Cách in PDF chuẩn A4 (1 trang duy nhất)</h3>
+        <ol>
+          <li>Tại cửa sổ thiết lập in của trình duyệt, chọn <strong>Save as PDF (Lưu dưới dạng PDF)</strong>.</li>
+          <li>Ở phần Cài đặt nâng cao (More Settings), hãy <strong>BỎ TÍCH</strong> ô <strong>Headers and footers (Tiêu đề đầu trang và chân trang)</strong>.</li>
+          <li>Hệ thống đã tự động định dạng kích thước A4, tên tệp tin tải về sẽ được tự động gợi ý theo Số báo giá (ví dụ: <code>BG-EVG-2026-06-001.pdf</code>).</li>
+        </ol>
+      </div>
+
+      <div class="guide-section">
+        <h3>4. Quản lý Lịch sử & Phục hồi dữ liệu</h3>
+        <p>Truy cập vào mục <strong>Lịch sử</strong> để xem thống kê tổng số lượng file. Bạn có thể nhấn <strong>"Sửa"</strong> để mở lại bất kỳ cấu hình báo giá cũ nào và cập nhật thông số nhanh chóng.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Fetch live quotes statistics
+    document.addEventListener("DOMContentLoaded", function() {
+      fetch('/api/list-quotes')
+        .then(res => {
+          if (!res.ok) throw new Error("API error");
+          return res.json();
+        })
+        .then(data => {
+          const count = data.length || 0;
+          document.getElementById('active-quotes-count').innerText = `${count} báo giá đang lưu trữ`;
+        })
+        .catch(err => {
+          document.getElementById('active-quotes-count').innerText = "Hệ thống lưu trữ online";
+        });
+    });
+
+    // Toggle Guide Modal
+    function toggleModal(show) {
+      const modal = document.getElementById('guide-modal');
+      if (show) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      } else {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
+
+    // Escape key closes modal
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        toggleModal(false);
+      }
+    });
+  </script>
 </body>
 </html>
