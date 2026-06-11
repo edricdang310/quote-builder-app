@@ -31,6 +31,28 @@
 
     * {
       box-sizing: border-box;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.12) rgba(9, 13, 22, 0.3);
+    }
+
+    /* Custom Scrollbar Styling for Webkit Browsers */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(9, 13, 22, 0.3);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      transition: background 0.2s ease;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--ui-accent);
     }
 
     body {
@@ -500,7 +522,7 @@
         overflow: visible;
       }
 
-      .editor-panel {
+      .editor-panel, .btn-toggle-preview {
         display: none !important;
       }
 
@@ -519,6 +541,8 @@
         height: 297mm !important;
         page-break-after: avoid;
         page-break-inside: avoid;
+        transform: none !important;
+        margin-bottom: 0 !important;
       }
     }
 
@@ -683,6 +707,70 @@
 
     .btn-share-close:hover {
       color: var(--ui-text);
+    }
+
+    /* Mobile / Tablet Viewport Overrides */
+    .btn-toggle-preview {
+      display: none;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 999;
+      background: var(--ui-accent);
+      color: #000;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 14px;
+      box-shadow: 0 4px 15px rgba(216, 155, 0, 0.4);
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-toggle-preview:hover {
+      background: var(--ui-accent-hover);
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 1024px) {
+      .btn-toggle-preview {
+        display: flex;
+      }
+
+      .editor-panel {
+        width: 100% !important;
+        min-width: 100% !important;
+        border-right: none;
+      }
+
+      .preview-panel {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 998;
+        background: #1e293b;
+        padding: 20px 10px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        justify-content: flex-start;
+        align-items: flex-start;
+      }
+
+      .preview-panel.show-mobile {
+        display: flex !important;
+      }
+
+      .page {
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      }
     }
   </style>
 </head>
@@ -944,6 +1032,19 @@
     </div>
 
   </div>
+
+  <!-- Floating Toggle Preview Button for Mobile -->
+  <button class="btn-toggle-preview" id="toggle-preview-btn" onclick="toggleMobilePreview()">
+    <svg class="icon-eye" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+      <circle cx="12" cy="12" r="3"></circle>
+    </svg>
+    <svg class="icon-close" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:none;">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+    <span>Xem trước</span>
+  </button>
 
   <script>
     // Initial sample items to populate when the app loads
@@ -1644,6 +1745,7 @@
         `;
         tbody.appendChild(r1);
       }
+      adjustPreviewScale();
     }
 
     // Share Modal Functionality
@@ -1688,6 +1790,58 @@
         window.open(sharedQuoteUrl, '_blank');
       }
     }
+
+    // Toggle Preview Panel on Mobile
+    function toggleMobilePreview() {
+      const previewPanel = document.querySelector('.preview-panel');
+      const btn = document.getElementById('toggle-preview-btn');
+      const iconEye = btn.querySelector('.icon-eye');
+      const iconClose = btn.querySelector('.icon-close');
+      const btnText = btn.querySelector('span');
+
+      if (previewPanel.classList.contains('show-mobile')) {
+        previewPanel.classList.remove('show-mobile');
+        iconEye.style.display = 'block';
+        iconClose.style.display = 'none';
+        btnText.innerText = 'Xem trước';
+        document.body.style.overflow = '';
+      } else {
+        previewPanel.classList.add('show-mobile');
+        iconEye.style.display = 'none';
+        iconClose.style.display = 'block';
+        btnText.innerText = 'Đóng xem';
+        document.body.style.overflow = 'hidden';
+        adjustPreviewScale();
+      }
+    }
+
+    // Scale A4 Preview Page to fit mobile screens
+    function adjustPreviewScale() {
+      const previewPanel = document.querySelector('.preview-panel');
+      const page = document.getElementById('print-page');
+      if (!previewPanel || !page) return;
+
+      const isMobile = window.innerWidth <= 1024;
+      if (isMobile) {
+        const panelWidth = previewPanel.clientWidth - 20; // 10px padding on each side
+        const pageWidth = 794; // approx width of 210mm in pixels
+        if (panelWidth < pageWidth) {
+          const scale = panelWidth / pageWidth;
+          page.style.transform = `scale(${scale})`;
+          page.style.transformOrigin = 'top center';
+          // Pull up space below scaled page
+          page.style.marginBottom = `-${1123 * (1 - scale)}px`;
+        } else {
+          page.style.transform = 'none';
+          page.style.marginBottom = '0';
+        }
+      } else {
+        page.style.transform = 'none';
+        page.style.marginBottom = '0';
+      }
+    }
+
+    window.addEventListener('resize', adjustPreviewScale);
 
     // Launch!
     window.onload = init;

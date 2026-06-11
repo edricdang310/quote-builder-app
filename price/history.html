@@ -23,6 +23,28 @@
 
     * {
       box-sizing: border-box;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.12) rgba(9, 13, 22, 0.3);
+    }
+
+    /* Custom Scrollbar Styling for Webkit Browsers */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(9, 13, 22, 0.3);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      transition: background 0.2s ease;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--ui-accent);
     }
 
     body {
@@ -534,17 +556,6 @@
           <span class="stat-value" id="stats-size">0 KB</span>
         </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-          </svg>
-        </div>
-        <div class="stat-info">
-          <span class="stat-label">Thư mục làm việc</span>
-          <span class="stat-value" style="font-size: 14px; font-weight: 600;">/Service_quote</span>
-        </div>
-      </div>
     </div>
 
     <!-- CONTROL PANEL (SEARCH) -->
@@ -565,10 +576,9 @@
         <thead>
           <tr>
             <th style="width: 5%; text-align: center;">STT</th>
-            <th style="width: 40%;">Tên file báo giá</th>
-            <th style="width: 20%;">Thời gian chia sẻ</th>
+            <th style="width: 45%;">Tên file báo giá</th>
+            <th style="width: 25%;">Thời gian chia sẻ</th>
             <th style="width: 12%;">Dung lượng</th>
-            <th style="width: 10%;">Trạng thái</th>
             <th style="width: 13%;">Thao tác</th>
           </tr>
         </thead>
@@ -599,11 +609,11 @@
       const tbody = document.getElementById('quotes-list');
       const emptyState = document.getElementById('empty-state');
 
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--ui-text-muted); padding:40px;">Đang tải danh sách báo giá...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--ui-text-muted); padding:40px;">Đang tải danh sách báo giá...</td></tr>';
       emptyState.style.display = 'none';
 
       if (window.location.protocol === 'file:') {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#ef4444; padding:40px; font-weight:600;">⚠️ Tính năng lịch sử chỉ hoạt động khi chạy qua server.py (http://localhost:8080)</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#ef4444; padding:40px; font-weight:600;">⚠️ Tính năng lịch sử chỉ hoạt động khi chạy qua server.py (http://localhost:8080)</td></tr>';
         return;
       }
 
@@ -611,7 +621,7 @@
         .then(res => res.json())
         .then(data => {
           if (data.error) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#ef4444; padding:40px;">Lỗi tải dữ liệu: ${data.error}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ef4444; padding:40px;">Lỗi tải dữ liệu: ${data.error}</td></tr>`;
             return;
           }
 
@@ -620,7 +630,7 @@
           updateDashboardStats(allQuotes);
         })
         .catch(err => {
-          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#ef4444; padding:40px;">Không thể kết nối đến máy chủ. Hãy đảm bảo server.py đang chạy.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#ef4444; padding:40px;">Không thể kết nối đến máy chủ. Hãy đảm bảo server.py đang chạy.</td></tr>';
           console.error(err);
         });
     }
@@ -692,7 +702,6 @@
           </td>
           <td style="color: var(--ui-text-muted);">${dateStr}</td>
           <td style="font-weight: 500;">${sizeStr}</td>
-          <td><span class="${badgeClass}">${badgeText}</span></td>
           <td class="actions-cell">
             <div class="actions-wrapper">
               ${actionButtons}
