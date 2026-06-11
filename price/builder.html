@@ -713,32 +713,132 @@
     .btn-toggle-preview {
       display: none;
       position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 999;
-      background: var(--ui-accent);
-      color: #000;
-      border: none;
-      padding: 12px 18px;
+      top: 16px;
+      right: 16px;
+      z-index: 1000;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(245, 158, 11, 0.08) 100%);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      color: var(--ui-accent);
+      border: 1.5px solid rgba(245, 158, 11, 0.45);
+      height: 38px;
       border-radius: 30px;
-      font-weight: 600;
-      font-size: 14px;
-      box-shadow: 0 4px 15px rgba(216, 155, 0, 0.4);
+      box-shadow: 
+        0 8px 24px rgba(0, 0, 0, 0.35),
+        0 0 0 0 rgba(245, 158, 11, 0.25),
+        inset 0 1.5px 3px rgba(255, 255, 255, 0.25),
+        inset 0 -1.5px 3px rgba(0, 0, 0, 0.45);
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
+      padding: 0 14px 0 10px;
       cursor: pointer;
-      font-family: inherit;
-      transition: all 0.2s ease;
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      outline: none;
+      animation: preview-pulse 2.5s infinite;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    
+    @keyframes preview-pulse {
+      0% {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 0 0 rgba(245, 158, 11, 0.25), inset 0 1.5px 3px rgba(255, 255, 255, 0.25), inset 0 -1.5px 3px rgba(0, 0, 0, 0.45);
+      }
+      70% {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 0 12px rgba(245, 158, 11, 0), inset 0 1.5px 3px rgba(255, 255, 255, 0.25), inset 0 -1.5px 3px rgba(0, 0, 0, 0.45);
+      }
+      100% {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 0 0 rgba(245, 158, 11, 0), inset 0 1.5px 3px rgba(255, 255, 255, 0.25), inset 0 -1.5px 3px rgba(0, 0, 0, 0.45);
+      }
+    }
+    
+    .btn-toggle-preview svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2.2px;
+      transition: all 0.3s ease;
     }
     
     .btn-toggle-preview:hover {
-      background: var(--ui-accent-hover);
-      transform: translateY(-1px);
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.4) 0%, rgba(245, 158, 11, 0.18) 100%);
+      color: #fff;
+      border-color: rgba(245, 158, 11, 0.7);
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 
+        0 12px 28px rgba(245, 158, 11, 0.35),
+        inset 0 1.5px 3px rgba(255, 255, 255, 0.45);
+      animation: none;
+    }
+
+    .btn-toggle-preview:hover svg {
+      transform: scale(1.08);
+    }
+
+    .btn-toggle-preview:active {
+      transform: scale(0.96) translateY(0);
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.5) 0%, rgba(245, 158, 11, 0.25) 100%);
+    }
+
+    /* Floating Zoom Capsule Bar for Mobile Preview */
+    .preview-control-bar {
+      display: none;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      padding: 5px 10px;
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .zoom-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #fff;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .zoom-btn:hover {
+      background: var(--ui-accent);
+      color: #000;
+      border-color: transparent;
+    }
+
+    .zoom-btn-text {
+      width: auto;
+      border-radius: 15px;
+      padding: 0 8px;
+      font-size: 10px;
+      font-weight: 600;
+      height: 26px;
+    }
+
+    .zoom-level {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ui-text-muted);
+      min-width: 32px;
+      text-align: center;
     }
 
     @media (max-width: 1024px) {
-      .btn-toggle-preview {
+      .btn-toggle-preview.visible {
         display: flex;
       }
 
@@ -757,19 +857,27 @@
         height: 100vh;
         z-index: 998;
         background: #1e293b;
-        padding: 20px 10px;
-        overflow-y: auto;
-        overflow-x: hidden;
-        justify-content: flex-start;
-        align-items: flex-start;
+        padding: 64px 10px 20px;
+        overflow: auto;
+        box-sizing: border-box;
       }
 
       .preview-panel.show-mobile {
-        display: flex !important;
+        display: block !important;
+        text-align: center;
       }
 
       .page {
+        display: inline-block !important;
+        text-align: left;
         box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        flex-shrink: 0 !important;
+        width: 210mm !important;
+        min-width: 210mm !important;
+      }
+      
+      .preview-panel.show-mobile ~ .preview-control-bar {
+        display: flex !important;
       }
     }
   </style>
@@ -869,7 +977,7 @@
 
         <!-- DYNAMIC VPS LIST -->
         <div>
-          <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="section-title" id="vps-list-section-header" style="display: flex; justify-content: space-between; align-items: center;">
             <span>Danh sách VPS</span>
             <button class="btn-delete" style="background:#555;" onclick="clearAllItems()">Xóa hết</button>
           </div>
@@ -1043,8 +1151,27 @@
       <line x1="18" y1="6" x2="6" y2="18"></line>
       <line x1="6" y1="6" x2="18" y2="18"></line>
     </svg>
-    <span>Xem trước</span>
+    <span class="btn-text">Xem trước</span>
   </button>
+
+  <!-- Floating Zoom Capsule Bar for Mobile Preview -->
+  <div class="preview-control-bar" id="preview-zoom-bar">
+    <button class="zoom-btn" onclick="adjustZoom(-0.1)" title="Thu nhỏ">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+    </button>
+    <span class="zoom-level" id="zoom-percentage">Fit</span>
+    <button class="zoom-btn" onclick="adjustZoom(0.1)" title="Phóng to">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+    </button>
+    <div style="width: 1px; height: 14px; background: rgba(255,255,255,0.15);"></div>
+    <button class="zoom-btn zoom-btn-text" onclick="resetZoom('fit')">Tự động</button>
+    <button class="zoom-btn zoom-btn-text" onclick="resetZoom(1.0)">100%</button>
+  </div>
 
   <script>
     // Initial sample items to populate when the app loads
@@ -1071,6 +1198,13 @@
         generateQuoteNumberAndDate();
         resetToSample();
       }
+
+      // Attach scroll listener to editor-content for floating preview button logic
+      const editorContent = document.querySelector('.editor-content');
+      if (editorContent) {
+        editorContent.addEventListener('scroll', handleScrollPreviewButton);
+      }
+      handleScrollPreviewButton();
     }
 
     function loadQuoteForEdit(filename) {
@@ -1789,30 +1923,65 @@
       if (sharedQuoteUrl) {
         window.open(sharedQuoteUrl, '_blank');
       }
-    }
-
-    // Toggle Preview Panel on Mobile
+    }    // Toggle Preview Panel on Mobile
     function toggleMobilePreview() {
       const previewPanel = document.querySelector('.preview-panel');
       const btn = document.getElementById('toggle-preview-btn');
       const iconEye = btn.querySelector('.icon-eye');
       const iconClose = btn.querySelector('.icon-close');
-      const btnText = btn.querySelector('span');
+      const btnText = btn.querySelector('.btn-text');
 
       if (previewPanel.classList.contains('show-mobile')) {
         previewPanel.classList.remove('show-mobile');
         iconEye.style.display = 'block';
         iconClose.style.display = 'none';
-        btnText.innerText = 'Xem trước';
+        if (btnText) btnText.innerText = 'Xem trước';
         document.body.style.overflow = '';
+        handleScrollPreviewButton(); // Re-apply scroll-based visibility on close
       } else {
         previewPanel.classList.add('show-mobile');
         iconEye.style.display = 'none';
         iconClose.style.display = 'block';
-        btnText.innerText = 'Đóng xem';
+        if (btnText) btnText.innerText = 'Đóng';
         document.body.style.overflow = 'hidden';
+        btn.classList.add('visible'); // Force visible when preview overlay is open
         adjustPreviewScale();
+        centerPreviewScroll();
       }
+    }
+
+    // Dynamic Zoom Control variables
+    let currentZoomScale = 1.0;
+    let isZoomFit = true;
+
+    function adjustZoom(delta) {
+      isZoomFit = false;
+      let newScale = currentZoomScale + delta;
+      newScale = Math.max(0.25, Math.min(2.0, newScale));
+      applyZoomScale(newScale);
+    }
+
+    function resetZoom(type) {
+      if (type === 'fit') {
+        isZoomFit = true;
+        adjustPreviewScale();
+      } else {
+        isZoomFit = false;
+        applyZoomScale(type);
+      }
+    }
+
+    function applyZoomScale(scale) {
+      const page = document.getElementById('print-page');
+      if (!page) return;
+
+      currentZoomScale = scale;
+      page.style.transform = `scale(${scale})`;
+      page.style.transformOrigin = 'top center';
+      page.style.marginBottom = `-${1123 * (1 - scale)}px`;
+      
+      document.getElementById('zoom-percentage').innerText = Math.round(scale * 100) + '%';
+      centerPreviewScroll();
     }
 
     // Scale A4 Preview Page to fit mobile screens
@@ -1823,25 +1992,93 @@
 
       const isMobile = window.innerWidth <= 1024;
       if (isMobile) {
-        const panelWidth = previewPanel.clientWidth - 20; // 10px padding on each side
-        const pageWidth = 794; // approx width of 210mm in pixels
-        if (panelWidth < pageWidth) {
-          const scale = panelWidth / pageWidth;
-          page.style.transform = `scale(${scale})`;
-          page.style.transformOrigin = 'top center';
-          // Pull up space below scaled page
-          page.style.marginBottom = `-${1123 * (1 - scale)}px`;
-        } else {
-          page.style.transform = 'none';
-          page.style.marginBottom = '0';
+        page.style.flexShrink = '0';
+        page.style.width = '210mm';
+        page.style.minWidth = '210mm';
+
+        if (isZoomFit) {
+          const panelWidth = previewPanel.clientWidth - 20; // 10px padding on each side
+          const pageWidth = 794; // approx width of 210mm in pixels
+          if (panelWidth < pageWidth) {
+            const scale = panelWidth / pageWidth;
+            currentZoomScale = scale;
+            page.style.transform = `scale(${scale})`;
+            page.style.transformOrigin = 'top center';
+            page.style.marginBottom = `-${1123 * (1 - scale)}px`;
+            document.getElementById('zoom-percentage').innerText = 'Fit';
+          } else {
+            currentZoomScale = 1.0;
+            page.style.transform = 'none';
+            page.style.marginBottom = '0';
+            document.getElementById('zoom-percentage').innerText = '100%';
+          }
+          centerPreviewScroll();
         }
       } else {
         page.style.transform = 'none';
         page.style.marginBottom = '0';
+        page.style.flexShrink = '';
+        page.style.width = '';
+        page.style.minWidth = '';
       }
     }
 
-    window.addEventListener('resize', adjustPreviewScale);
+    // Centering scroll position to center the A4 page layout
+    function centerPreviewScroll() {
+      const previewPanel = document.querySelector('.preview-panel');
+      const page = document.getElementById('print-page');
+      if (!previewPanel || !page) return;
+      
+      setTimeout(() => {
+        const scrollTarget = (page.offsetWidth - previewPanel.clientWidth) / 2;
+        previewPanel.scrollLeft = scrollTarget;
+      }, 50);
+    }
+
+    // Handle scroll-based visibility for Mobile Preview Button
+    function handleScrollPreviewButton() {
+      const editorContent = document.querySelector('.editor-content');
+      const toggleBtn = document.getElementById('toggle-preview-btn');
+      const previewPanel = document.querySelector('.preview-panel');
+      const vpsSection = document.getElementById('vps-list-section-header');
+
+      if (!editorContent || !toggleBtn || !previewPanel) return;
+
+      // If preview panel is currently open on mobile, it must stay visible
+      if (previewPanel.classList.contains('show-mobile')) {
+        toggleBtn.classList.add('visible');
+        return;
+      }
+
+      if (window.innerWidth <= 1024) {
+        if (vpsSection) {
+          const vpsRect = vpsSection.getBoundingClientRect();
+          const editorRect = editorContent.getBoundingClientRect();
+
+          // Show button if the top of the VPS section is close to or above the editor viewport top
+          // (representing having scrolled past the General Info section)
+          if (vpsRect.top < editorRect.top + 250) {
+            toggleBtn.classList.add('visible');
+          } else {
+            toggleBtn.classList.remove('visible');
+          }
+        } else {
+          // Fallback based on scroll offset
+          if (editorContent.scrollTop > 150) {
+            toggleBtn.classList.add('visible');
+          } else {
+            toggleBtn.classList.remove('visible');
+          }
+        }
+      } else {
+        toggleBtn.classList.remove('visible');
+      }
+    }
+
+    window.addEventListener('resize', () => {
+      adjustPreviewScale();
+      handleScrollPreviewButton();
+    });
 
     // Launch!
     window.onload = init;
